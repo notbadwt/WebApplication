@@ -1,15 +1,15 @@
 package com.application.entity;
 
+import org.mybatis.spring.annotation.MapperScan;
+
 /**
  * Created by pgwt on 2016/11/29.
  */
 public class User {
 
-
     private String id;
     private String username;
     private String password;
-
 
     public String getId() {
         return id;
