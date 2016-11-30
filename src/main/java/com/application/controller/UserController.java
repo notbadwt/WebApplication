@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * Created by WangTao on 2016/11/30 0030.
+ *
  */
 @Controller
 public class UserController {

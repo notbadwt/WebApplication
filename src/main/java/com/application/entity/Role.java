@@ -1,0 +1,46 @@
+package com.application.entity;
+
+import java.util.List;
+
+/**
+ * Created by pgwt on 2016/11/30.
+ */
+public class Role {
+
+    private String id;
+    private String name;
+    private String label;
+    private List<Permission> permissionList;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public List<Permission> getPermissionList() {
+        return permissionList;
+    }
+
+    public void setPermissionList(List<Permission> permissionList) {
+        this.permissionList = permissionList;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+}

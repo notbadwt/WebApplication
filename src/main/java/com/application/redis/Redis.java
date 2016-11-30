@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by Administrator on 2016/7/20 0020.
+ * Created by WangTao on 2016/7/20 0020.
  */
 
 public interface Redis {

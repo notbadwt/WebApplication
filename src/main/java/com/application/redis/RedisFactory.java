@@ -7,7 +7,7 @@ import java.util.Properties;
 import java.util.Set;
 
 /**
- * Created by Administrator on 2016/7/20 0020.
+ * Created by WangTao on 2016/7/20 0020.
  */
 public class RedisFactory {
 
