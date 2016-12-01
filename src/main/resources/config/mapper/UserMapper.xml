@@ -5,9 +5,41 @@
 
 
 <mapper namespace="com.application.dao.UserDao">
-    <select id="selectUser" parameterType="string" resultType="com.application.entity.User">
+
+    <select id="getUserById" parameterType="string" resultType="User">
         SELECT *
         FROM user
         WHERE ID = #{id}
     </select>
+
+    <insert id="insertUser" parameterType="User" flushCache="true">
+        INSERT INTO user (id, username, password, status, type, name, create_datetime, last_login_datetime) VALUES
+            (#{id}, #{username}, #{password}, #{status}, #{type}, #{name}, #{createDatetime}, #{lastLoginDatetime})
+    </insert>
+
+    <update id="updateUser" parameterType="User" flushCache="true">
+        UPDATE user
+        SET
+            username            = #{username},
+            password            = #{password},
+            status              = #{status},
+            type                = #{type},
+            name                = #{name},
+            create_datetime     = #{createDatetime},
+            last_login_datetime = #{lastLoginDatetime}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteUser" parameterType="string" flushCache="true">
+        DELETE FROM user
+        WHERE id = #{id}
+    </delete>
+
+    <update id="removeUser" parameterType="string" flushCache="true">
+        UPDATE user
+        SET
+            status = '0'
+        WHERE id = #{id}
+    </update>
+
 </mapper>

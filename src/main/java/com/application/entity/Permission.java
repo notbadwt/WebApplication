@@ -1,7 +1,8 @@
 package com.application.entity;
 
 /**
- * Created by pgwt on 2016/11/30.
+ * Created by WangTao on 2016/11/30.
+ *
  */
 public class Permission {
 
@@ -9,6 +10,8 @@ public class Permission {
     private String url;
     private String name;
     private String label;
+    private String status;
+    private String type;
 
     public String getId() {
         return id;
@@ -40,5 +43,21 @@ public class Permission {
 
     public void setLabel(String label) {
         this.label = label;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

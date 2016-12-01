@@ -1,14 +1,20 @@
 package com.application.dao;
 
 import com.application.entity.User;
-import org.mybatis.spring.annotation.MapperScan;
 
 /**
  * Created by WangTao on 2016/11/30 0030.
- *
  */
 public interface UserDao {
 
-    User selectUser(String id);
+    User getUserById(String id);
+
+    void insertUser(User user);
+
+    void updateUser(User user);
+
+    void deleteUser(String id);
+
+    void removeUser(String id);
 
 }

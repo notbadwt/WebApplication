@@ -1,15 +1,19 @@
 package com.application.entity;
 
-import org.mybatis.spring.annotation.MapperScan;
-
 /**
- * Created by pgwt on 2016/11/29.
+ * Created by WangTao on 2016/11/29.
+ *
  */
 public class User {
 
     private String id;
     private String username;
     private String password;
+    private String status;
+    private String type;
+    private String name;
+    private Long createDatetime;
+    private Long lastLoginDatetime;
 
     public String getId() {
         return id;
@@ -33,5 +37,45 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Long getCreateDatetime() {
+        return createDatetime;
+    }
+
+    public void setCreateDatetime(Long createDatetime) {
+        this.createDatetime = createDatetime;
+    }
+
+    public Long getLastLoginDatetime() {
+        return lastLoginDatetime;
+    }
+
+    public void setLastLoginDatetime(Long lastLoginDatetime) {
+        this.lastLoginDatetime = lastLoginDatetime;
     }
 }
