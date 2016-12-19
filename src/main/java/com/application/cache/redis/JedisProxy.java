@@ -1,17 +1,19 @@
-package com.application.redis;
+package com.application.cache.redis;
 
-import redis.clients.jedis.JedisCluster;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.Pipeline;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-public class JedisClusterProxy implements Redis {
-    private JedisCluster jedis;
+/**
+ * Created by WangTao on 2016/7/20 0020.
+ */
+public class JedisProxy implements Redis {
+
+    private Jedis jedis;
     private int defaultExpireTime; //单位: 秒
 
-    public JedisClusterProxy(JedisCluster jedis, int defaultExpireTime) {
+    public JedisProxy(Jedis jedis, int defaultExpireTime) {
         this.jedis = jedis;
         this.defaultExpireTime = defaultExpireTime;
     }
@@ -68,10 +70,7 @@ public class JedisClusterProxy implements Redis {
 
     @Override
     public void close() {
-        try {
-            jedis.close();
-        } catch (Exception e) {
-        }
+        jedis.close();
     }
 
     @Override
@@ -97,12 +96,25 @@ public class JedisClusterProxy implements Redis {
     }
 
     public List<Map<String, String>> getListHash(Collection<String> redisList) throws Exception {
+        Pipeline pipeline = jedis.pipelined();
         ArrayList<Map<String, String>> hashList = new ArrayList<>();
         for (String key : redisList) {
-            Map<String, String> hash = jedis.hgetAll(key);
-            if (hash.keySet().size() > 0) {
-                hashList.add(hash);
+            pipeline.hgetAll(key);
+        }
+        pipeline.multi();
+        List<Object> result = pipeline.syncAndReturnAll();
+        for (Object object : result) {
+            if (!(object instanceof String)) {
+                HashMap<String, String> hash = (HashMap<String, String>) object;
+                if (hash.keySet().size() > 0) {
+                    hashList.add(hash);
+                }
             }
+        }
+        try {
+            pipeline.close();
+        } catch (Exception e) {
+            throw e;
         }
         return hashList;
     }

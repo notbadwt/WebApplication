@@ -1,22 +1,17 @@
-package com.application.redis;
+package com.application.cache.redis;
 
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.Pipeline;
+import redis.clients.jedis.JedisCluster;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
-/**
- * Created by WangTao on 2016/7/20 0020.
- */
-public class JedisProxy implements Redis {
-
-    private Jedis jedis;
+public class JedisClusterProxy implements Redis {
+    private JedisCluster jedis;
     private int defaultExpireTime; //单位: 秒
 
-    public JedisProxy(Jedis jedis, int defaultExpireTime) {
+    public JedisClusterProxy(JedisCluster jedis, int defaultExpireTime) {
         this.jedis = jedis;
         this.defaultExpireTime = defaultExpireTime;
     }
@@ -73,7 +68,10 @@ public class JedisProxy implements Redis {
 
     @Override
     public void close() {
-        jedis.close();
+        try {
+            jedis.close();
+        } catch (Exception e) {
+        }
     }
 
     @Override
@@ -99,25 +97,12 @@ public class JedisProxy implements Redis {
     }
 
     public List<Map<String, String>> getListHash(Collection<String> redisList) throws Exception {
-        Pipeline pipeline = jedis.pipelined();
         ArrayList<Map<String, String>> hashList = new ArrayList<>();
         for (String key : redisList) {
-            pipeline.hgetAll(key);
-        }
-        pipeline.multi();
-        List<Object> result = pipeline.syncAndReturnAll();
-        for (Object object : result) {
-            if (!(object instanceof String)) {
-                HashMap<String, String> hash = (HashMap<String, String>) object;
-                if (hash.keySet().size() > 0) {
-                    hashList.add(hash);
-                }
+            Map<String, String> hash = jedis.hgetAll(key);
+            if (hash.keySet().size() > 0) {
+                hashList.add(hash);
             }
-        }
-        try {
-            pipeline.close();
-        } catch (Exception e) {
-            throw e;
         }
         return hashList;
     }
