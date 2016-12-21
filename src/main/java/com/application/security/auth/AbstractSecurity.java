@@ -13,7 +13,9 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 
-public class Authentication {
+public abstract class AbstractSecurity {
+
+    private String loginUrl;
 
     private UserDetailsService userDetailsService;
 
@@ -31,18 +33,36 @@ public class Authentication {
         anonymousList = new CopyOnWriteArrayList<>();
     }
 
-    public Authentication(UserDetailsService userDetailsService) {
+    public AbstractSecurity(UserDetailsService userDetailsService, String loginUrl) {
         this.userDetailsService = userDetailsService;
+        this.loginUrl = loginUrl;
     }
 
-    private UserDetails login(HttpServletRequest request, UserDetails userDetails) {
+    private UserDetails authenticate(HttpServletRequest request, UserDetails userDetails) {
         HttpSession session = request.getSession();
         session.setAttribute("userDetails", userDetails);
         session.setMaxInactiveInterval(3600);
         return userDetails;
     }
 
-    public UserDetails usernameAndPasswordLogin(HttpServletRequest request, String username, String password) throws AuthenticationException {
+
+    public void saveRequest(HttpServletRequest request) {
+        String redirectUrl = request.getRequestURI() + "?" + request.getQueryString();
+        HttpSession session = request.getSession();
+        session.setAttribute("redirectUrl", redirectUrl);
+    }
+
+    public String getSavedRequest(HttpServletRequest request) {
+        Object redirectUrl = request.getSession().getAttribute("redirectUrl");
+        if (redirectUrl != null) {
+            request.getSession().removeAttribute("redirectUrl");
+            return redirectUrl.toString();
+        } else {
+            return null;
+        }
+    }
+
+    public UserDetails authenticateByPassword(HttpServletRequest request, String username, String password) throws AuthenticationException {
         if (username == null || "".equals(username)) {
             throw new AuthenticationException("用户名不能为空");
         }
@@ -56,10 +76,10 @@ public class Authentication {
             throw new AuthenticationException("用户名密码不匹配");
         }
 
-        return login(request, userDetails);
+        return authenticate(request, userDetails);
     }
 
-    public UserDetails unionIdLogin(HttpServletRequest request, String unionId) throws AuthenticationException {
+    public UserDetails authenticateByUnionId(HttpServletRequest request, String unionId) throws AuthenticationException {
         if (unionId == null || "".equals(unionId)) {
             throw new AuthenticationException("unionId 不能为空");
         }
@@ -70,7 +90,7 @@ public class Authentication {
             throw new AuthenticationException("用户不存在");
         }
 
-        return login(request, userDetails);
+        return authenticate(request, userDetails);
     }
 
     public boolean logout(HttpServletRequest request) throws AuthenticationException {
@@ -86,17 +106,29 @@ public class Authentication {
         return true;
     }
 
-    public boolean hasPermission(HttpServletRequest request) {
-        return false;
+    public String getLoginUrl() {
+        return loginUrl;
     }
 
+    public void setLoginUrl(String loginUrl) {
+        this.loginUrl = loginUrl;
+    }
+
+    public abstract boolean isAuthenticated(HttpServletRequest request);
+
     public UserDetails getCurrentUser(HttpServletRequest request) {
-        return null;
+        UserDetails userDetails = null;
+        HttpSession session = request.getSession();
+        Object userObject = session.getAttribute("userDetails");
+        if (userObject != null) {
+            userDetails = (UserDetails) userObject;
+        }
+        return userDetails;
     }
 
     private boolean comparePassword(UserDetails userDetails, String password) {
         String userPassword = userDetails.getPassword();
-        return (userPassword.equals(encodePassword(password, ENCODE)));
+        return (userPassword.equals((password)));
     }
 
     private String encodePassword(String password, String algorithm) {

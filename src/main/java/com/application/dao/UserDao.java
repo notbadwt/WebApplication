@@ -9,6 +9,10 @@ public interface UserDao {
 
     User getUserById(String id);
 
+    User getUserByUsername(String username);
+
+    User getUserByUnionId(String unionId);
+
     void insertUser(User user);
 
     void updateUser(User user);

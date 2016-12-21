@@ -1,10 +1,11 @@
 package com.application.entity;
 
+import com.application.security.model.UserDetails;
+
 /**
  * Created by WangTao on 2016/11/29.
- *
  */
-public class User {
+public class User implements UserDetails {
 
     private String id;
     private String username;
@@ -12,8 +13,17 @@ public class User {
     private String status;
     private String type;
     private String name;
+    private String unionId;
     private Long createDatetime;
     private Long lastLoginDatetime;
+
+    public String getUnionId() {
+        return unionId;
+    }
+
+    public void setUnionId(String unionId) {
+        this.unionId = unionId;
+    }
 
     public String getId() {
         return id;

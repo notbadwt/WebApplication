@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns="http://java.sun.com/xml/ns/javaee"
-           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-           xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
 		  http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
-           version="3.0">
+         version="3.0">
 
     <context-param>
         <param-name>contextConfigLocation</param-name>
@@ -48,7 +48,15 @@
         <dispatcher>INCLUDE</dispatcher>
     </filter-mapping>
 
+    <filter>
+        <filter-name>securityFilter</filter-name>
+        <filter-class>com.application.security.filter.SecurityFilter</filter-class>
+    </filter>
 
+    <filter-mapping>
+        <filter-name>securityFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 
 
     <!-- 定义DispatcherServlet -->
@@ -75,13 +83,13 @@
 
 
     <!--<jsp-config>-->
-        <!--&lt;!&ndash;增加自定义标签 &ndash;&gt;-->
-        <!--<taglib>-->
-            <!--&lt;!&ndash; 确定标签库的URI&ndash;&gt;-->
-            <!--<taglib-uri></taglib-uri>-->
-            <!--&lt;!&ndash; 确定标签库定义文件的位置 &ndash;&gt;-->
-            <!--<taglib-location></taglib-location>-->
-        <!--</taglib>-->
+    <!--&lt;!&ndash;增加自定义标签 &ndash;&gt;-->
+    <!--<taglib>-->
+    <!--&lt;!&ndash; 确定标签库的URI&ndash;&gt;-->
+    <!--<taglib-uri></taglib-uri>-->
+    <!--&lt;!&ndash; 确定标签库定义文件的位置 &ndash;&gt;-->
+    <!--<taglib-location></taglib-location>-->
+    <!--</taglib>-->
     <!--</jsp-config>-->
 
     <welcome-file-list>
