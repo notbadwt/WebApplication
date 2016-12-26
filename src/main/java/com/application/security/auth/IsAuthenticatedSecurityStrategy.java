@@ -31,7 +31,14 @@ public class IsAuthenticatedSecurityStrategy extends AbstractSecurity {
                 if (requestUrl.startsWith(urlTemp)) {
                     isNeedAuthenticate = true;
                 }
+            } else {
+                isNeedAuthenticate = url.equals(requestUrl);
             }
+
+            if (isNeedAuthenticate) {
+                break;
+            }
+
 
         }
 
