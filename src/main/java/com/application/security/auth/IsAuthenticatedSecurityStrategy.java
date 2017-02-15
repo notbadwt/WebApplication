@@ -7,9 +7,6 @@ import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-/**
- * Created by Administrator on 2016/12/21 0021.
- */
 public class IsAuthenticatedSecurityStrategy extends AbstractSecurity {
 
 
