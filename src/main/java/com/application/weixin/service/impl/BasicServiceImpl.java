@@ -22,7 +22,7 @@ public class BasicServiceImpl implements BasicService {
         AccessToken accessToken = AccessTokenHolder.getBasicAccessToken();
         if (accessToken.getStatus().equals(AccessToken.STATUS_AVAILABLE)) {
             return accessToken;
-        } else if (accessToken.getStatus().equals(AccessToken.STATUS_AUTHORIZATION_REQUIRED)) {
+        } else if (accessToken.getStatus().equals(AccessToken.STATUS_AUTHORIZATION_REQUIiRED)) {
             String url = "https://api.weixin.qq.com/cgi-bin/token";
             String param = "grant_type=client_credential&" + appId + "=" + secret + "&secret=#{secret}";
             try (JsonReader jsonReader = HttpRequest.sendGet(url, param)) {

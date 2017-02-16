@@ -1,8 +1,6 @@
 package com.application.weixin.model;
 
-/**
- * Created by Administrator on 2017/2/15 0015.
- */
+
 public class AccessToken extends Result {
 
     public static final String STATUS_AVAILABLE = "available";  //可用
