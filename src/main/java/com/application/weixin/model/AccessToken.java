@@ -27,7 +27,7 @@ public class AccessToken extends Result {
 
 
     public Boolean isExpires() {
-        Long currentDateTime = System.currentTimeMillis();
+        Long currentDateTime = System .currentTimeMillis();
         return (currentDateTime.compareTo(createDatetime + (expiresIn * 1000L)) >= 0);
     }
 
