@@ -1,6 +1,7 @@
 package com.application.weixin.service;
 
 import com.application.weixin.model.AccessToken;
+import com.application.weixin.model.StringResult;
 
 public interface BasicService {
 
@@ -9,7 +10,7 @@ public interface BasicService {
 
     AccessToken fetchAccessToken(String appId, String secret) throws Exception;
 
-    String fetchPageAccessTokenUrl(String appId, String redirectUrl, String scope, String state) throws Exception;
+    StringResult fetchPageAccessTokenUrl(String appId, String redirectUrl, String scope, String state) throws Exception;
 
     AccessToken fetchPageAccessToken(String appId, String secret, String code) throws Exception;
 

@@ -3,10 +3,13 @@ package com.application.weixin.service.impl;
 import com.application.weixin.AccessTokenHolder;
 import com.application.weixin.model.AccessToken;
 import com.application.weixin.model.Result;
+import com.application.weixin.model.StringResult;
 import com.application.weixin.service.BasicService;
 import com.application.weixin.util.HttpRequest;
 import com.application.weixin.util.Util;
 import com.google.gson.stream.JsonReader;
+
+import java.net.URLEncoder;
 
 
 public class BasicServiceImpl implements BasicService {
@@ -41,6 +44,8 @@ public class BasicServiceImpl implements BasicService {
                     } else if ("errmsg".equals(name)) {
                         accessToken.setErrmsg(jsonReader.nextString());
                         accessToken.setResultStatus(Result.ERROR);
+                    } else {
+                        jsonReader.nextString();
                     }
                 }
                 jsonReader.endObject();
@@ -50,12 +55,15 @@ public class BasicServiceImpl implements BasicService {
     }
 
     @Override
-    public String fetchPageAccessTokenUrl(String appId, String redirectUrl, String scope, String state) throws Exception {
+    public StringResult fetchPageAccessTokenUrl(String appId, String redirectUrl, String scope, String state) throws Exception {
         if (Util.paramNullValueCheck(appId, redirectUrl, scope, state)) {
             //@TODO 缺少专用的异常类型
             throw new Exception("参数检验失败");
         }
-        return "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + appId + "&redirect_uri=" + redirectUrl + "&response_type=code&scope=" + scope + "&state=" + state + "#wechat_redirect";
+
+        redirectUrl = URLEncoder.encode(redirectUrl, "UTF-8");
+
+        return new StringResult("https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + appId + "&redirect_uri=" + redirectUrl + "&response_type=code&scope=" + scope + "&state=" + state + "#wechat_redirect");
     }
 
     @Override
@@ -74,6 +82,7 @@ public class BasicServiceImpl implements BasicService {
             fillPageAccessToken(accessToken, jsonReader);
         }
 
+        accessToken.setStatus(AccessToken.STATUS_REFRESH_TOKEN_REQUIRED);
 
         return accessToken;
     }
@@ -95,6 +104,8 @@ public class BasicServiceImpl implements BasicService {
         try (JsonReader jsonReader = HttpRequest.sendGet(refreshUrl, refreshParam)) {
             fillPageAccessToken(accessToken, jsonReader);
         }
+
+        accessToken.setStatus(AccessToken.STATUS_REFRESH_TOKEN_REQUIRED);
 
         return accessToken;
     }
@@ -118,6 +129,10 @@ public class BasicServiceImpl implements BasicService {
                 accessToken.setErrcode(jsonReader.nextInt());
             } else if (name.equals("errmsg")) {
                 accessToken.setErrmsg(jsonReader.nextString());
+            } else if (name.equals("unionid")) {
+                accessToken.setUnionid(jsonReader.nextString());
+            } else {
+                jsonReader.nextString();
             }
         }
         jsonReader.endObject();

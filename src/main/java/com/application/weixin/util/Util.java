@@ -14,10 +14,10 @@ public class Util {
     public static Boolean paramNullValueCheck(Object... params) {
         for (Object param : params) {
             if (param == null) {
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
 }
