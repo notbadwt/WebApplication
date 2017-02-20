@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
 
-    <bean name="basicService" class="com.application.weixin.service.impl.BasicServiceImpl"/>
+    <bean id="tokenService" class="com.application.weixin.service.impl.TokenServiceImpl"/>
 
-    <bean name="weixin" class="com.application.weixin.Weixin">
+    <bean id="weixin" class="com.application.weixin.Weixin">
 
         <constructor-arg name="appId" value="wx7f6aa253b75466dd"/>
         <constructor-arg name="secret" value="04928de13ab23dca159d235ba6dc19ea"/>
         <constructor-arg name="type" value="FUWUHAO"/>
 
-        <property name="basicService" ref="basicService"/>
+        <property name="tokenService" ref="tokenService"/>
+
 
     </bean>
 

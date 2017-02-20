@@ -4,7 +4,8 @@ package com.application.controller;
 import com.application.weixin.AccessTokenHolder;
 import com.application.weixin.Weixin;
 import com.application.weixin.model.AccessToken;
-import com.application.weixin.service.BasicService;
+import com.application.weixin.model.Token;
+import com.application.weixin.service.TokenService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,18 +32,24 @@ public class TestWeixinController {
         String weixinCode = request.getParameter("code");
 //        String wexinState = request.getParameter("state");
         String openId;
-        AccessToken accessToken = weixin.getPageAccessToken();
-        if (accessToken.getStatus().equals(AccessToken.STATUS_REFRESH_TOKEN_REQUIRED)) {
+        Token accessToken = weixin.getPageAccessToken(AccessToken::new);
+        if (accessToken.getStatus().
+
+                equals(AccessToken.STATUS_REFRESH_TOKEN_REQUIRED))
+
+        {
             //当前的accessToken是可用的，不用从新获取Token，直接刷新就可可以
             openId = accessToken.getOpenid();
             model.addAttribute("openid", openId);
             model.addAttribute("function", "refresh");
             return "/weixin";
-        } else {
+        } else
+
+        {
             if (weixinCode == null || "".equals(weixinCode)) {
                 //需要通过网页授权从新获取token
                 String redirectUrl = "http://mall.efeiyi.com/application/getOpenidResult";
-                String scope = BasicService.PAGE_SCOPE_SNSAPI_BASE;
+                String scope = TokenService.PAGE_SCOPE_SNSAPI_BASE;
                 String state = "123";
                 String url = weixin.getPageAccessTokenUrl(redirectUrl, scope, state).getValue();
                 System.out.println("获取code的请求链接地址结果 URL = " + url);
@@ -58,7 +65,6 @@ public class TestWeixinController {
         }
     }
 
-
     @RequestMapping({"/getCurrentAccessTokenStatus"})
     @ResponseBody
     public String getCurrentAccessTokenStatus() {
@@ -71,7 +77,7 @@ public class TestWeixinController {
     @RequestMapping({"/getWeixinCode"})
     public String getWeixinCode(HttpServletRequest request) throws Exception {
         String redirectUrl = "http://mall.efeiyi.com/application/weixinCodeResult";
-        String scope = BasicService.PAGE_SCOPE_SNSAPI_BASE;
+        String scope = TokenService.PAGE_SCOPE_SNSAPI_BASE;
         String state = "123";
         String url = weixin.getPageAccessTokenUrl(redirectUrl, scope, state).getValue();
         System.out.println("获取code的请求链接地址结果 URL = " + url);

@@ -1,12 +1,10 @@
 package com.application.weixin.model;
 
 
-public class AccessToken extends Result {
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
-    public static final String STATUS_AVAILABLE = "available";  //可用
-    public static final String STATUS_PAGE_AUTHORIZATION_REQUIRED = "pageAuthorizationRequired"; // 需要网页授权
-    public static final String STATUS_REFRESH_TOKEN_REQUIRED = "refreshTokenRequired"; // 需要刷新token（网页授权使用）
-    public static final String STATUS_AUTHORIZATION_REQUIiRED = "authorization required"; // 需要授权
+public class AccessToken implements Token {
 
     private static final Long refreshTokenExpires = 30 * 24 * 50 * 60L;  //单位秒
 
@@ -25,12 +23,13 @@ public class AccessToken extends Result {
         createDatetime = System.currentTimeMillis();
     }
 
-
+    @Override
     public Boolean isExpires() {
-        Long currentDateTime = System .currentTimeMillis();
+        Long currentDateTime = System.currentTimeMillis();
         return (currentDateTime.compareTo(createDatetime + (expiresIn * 1000L)) >= 0);
     }
 
+    @Override
     public Boolean isRefreshTokenExpires() {
         Long currentDatetime = System.currentTimeMillis();
         Long endDatetime = createDatetime + (refreshTokenExpires * 1000L);
@@ -41,58 +40,72 @@ public class AccessToken extends Result {
         return result;
     }
 
+    @Override
     public Integer getExpiresIn() {
         return expiresIn;
     }
 
+    @Override
     public void setExpiresIn(Integer expiresIn) {
         this.expiresIn = expiresIn;
     }
 
+    @Override
     public String getAccessToken() {
         return accessToken;
     }
 
+    @Override
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
     }
 
+    @Override
     public String getStatus() {
         return status;
     }
 
+    @Override
     public void setStatus(String status) {
         this.status = status;
     }
 
+    @Override
     public String getRefreshToken() {
         return refreshToken;
     }
 
+    @Override
     public void setRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
     }
 
+    @Override
     public String getScope() {
         return scope;
     }
 
+    @Override
     public void setScope(String scope) {
         this.scope = scope;
     }
 
+    @Override
     public String getOpenid() {
         return openid;
     }
 
+    @Override
     public void setOpenid(String openid) {
         this.openid = openid;
     }
 
+    @Override
     public String getUnionid() {
         return unionid;
     }
 
+    @Override
     public void setUnionid(String unionid) {
         this.unionid = unionid;
     }
@@ -100,11 +113,8 @@ public class AccessToken extends Result {
 
     @Override
     public String toString() {
-        if (getResultStatus().equals(Result.SUCCESS)) {
-            return "[access_token:" + accessToken + "]\n[refresh_token:" + refreshToken + "]\n[openid:" + openid + "]";
-        } else {
-            return "[errcode:" + getErrcode() + "]\n[errmsg:" + getErrmsg() + "]";
-        }
+        Gson gson = new GsonBuilder().create();
+        return gson.toJson(this);
     }
 
 

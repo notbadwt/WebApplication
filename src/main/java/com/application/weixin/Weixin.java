@@ -2,7 +2,10 @@ package com.application.weixin;
 
 import com.application.weixin.model.AccessToken;
 import com.application.weixin.model.StringResult;
-import com.application.weixin.service.BasicService;
+import com.application.weixin.model.Token;
+import com.application.weixin.service.TokenService;
+
+import java.util.function.Supplier;
 
 /**
  * 微信模块包含很多子模块，如下：
@@ -27,61 +30,53 @@ public class Weixin {
     private String appId;
     private String secret;
     private WeixinType type;
+    private Class<? extends Token> tokenType;
 
-    private BasicService basicService;
+    private TokenService tokenService;
 
     public Weixin() {
-        if (getAppId() != null && getSecret() != null && getType() != null) {
-            login();
-        }
     }
 
-    public Weixin(String appId, String secret, WeixinType type) {
+    public Weixin(String appId, String secret, WeixinType type) throws Exception {
         if (appId != null && secret != null && type != null) {
             this.appId = appId;
             this.secret = secret;
             this.type = type;
-            this.login();
         }
     }
 
 
+
     public StringResult getPageAccessTokenUrl(String redirectUrl, String scope, String state) throws Exception {
-        return basicService.fetchPageAccessTokenUrl(appId, redirectUrl, scope, state);
+        return tokenService.fetchPageAccessTokenUrl(appId, redirectUrl, scope, state);
     }
 
-    public AccessToken getPageAccessToken(String code) throws Exception {
-        return basicService.fetchPageAccessToken(appId, secret, code);
+    public Token getPageAccessToken(String code) throws Exception {
+        return tokenService.fetchPageAccessToken(tokenType, appId, secret, code);
     }
 
-    public AccessToken getPageAccessToken() throws Exception {
-        AccessToken currentAccessToken = AccessTokenHolder.getPageAccessToken();
+    public Token getPageAccessToken(Supplier<? extends Token> supplier) throws Exception {
+        Token currentAccessToken = tokenService.fetchPageAccessToken(supplier);
         if (currentAccessToken.getStatus().equals(AccessToken.STATUS_REFRESH_TOKEN_REQUIRED)) {
-            return basicService.refreshPageAccessToken(appId, currentAccessToken.getRefreshToken());
+            return tokenService.refreshPageAccessToken(tokenType, appId, currentAccessToken.getRefreshToken());
         } else {
             return currentAccessToken;
         }
     }
 
-    public AccessToken refreshPageAccessToken(String refreshToken) throws Exception {
-        return basicService.refreshPageAccessToken(appId, refreshToken);
-    }
-
-    public AccessToken getAccessToken() throws Exception {
-        return basicService.fetchAccessToken(appId, secret);
+    public Token refreshPageAccessToken(String refreshToken) throws Exception {
+        return tokenService.refreshPageAccessToken(tokenType, appId, refreshToken);
     }
 
 
-    //@TODO 微信的基础授权以及网页授权
 
-    /**
-     * 该方法用户在调用微信相关接口之前获得微信的授权，这里已login命名，登录的账号就是appid以及secret属性
-     *
-     * @return 返回操作结果的码，参考微信接口码定义类
-     */
-    public String login() {
-        return null;
+
+    public Token getAccessToken() throws Exception {
+        return tokenService.fetchAccessToken(tokenType, appId, secret);
     }
+
+
+
 
 
     public String getAppId() {
@@ -108,12 +103,20 @@ public class Weixin {
         this.type = type;
     }
 
-    public BasicService getBasicService() {
-        return basicService;
+    public TokenService getTokenService() {
+        return tokenService;
     }
 
-    public void setBasicService(BasicService basicService) {
-        this.basicService = basicService;
+    public void setTokenService(TokenService tokenService) {
+        this.tokenService = tokenService;
+    }
+
+    public Class<? extends Token> getTokenType() {
+        return tokenType;
+    }
+
+    public void setTokenType(Class<? extends Token> tokenType) {
+        this.tokenType = tokenType;
     }
 
     public enum WeixinType {
