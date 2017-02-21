@@ -65,11 +65,15 @@ public class TestWeixinController {
         }
     }
 
+    public  AccessToken getCurrenAccessToken() {
+        return null;
+    }
+
     @RequestMapping({"/getCurrentAccessTokenStatus"})
     @ResponseBody
     public String getCurrentAccessTokenStatus() {
         Gson gson = new GsonBuilder().create();
-        AccessToken accessToken = AccessTokenHolder.getPageAccessToken();
+        Token accessToken = AccessTokenHolder.getPageAccessToken(AccessToken::new);
         return gson.toJson(accessToken);
     }
 
@@ -101,7 +105,7 @@ public class TestWeixinController {
     @ResponseBody
     public String getPageAccessToken(HttpServletRequest request) throws Exception {
         String code = request.getParameter("code");
-        AccessToken accessToken = weixin.getPageAccessToken(code);
+        Token accessToken = weixin.getPageAccessToken(code);
         System.out.println(accessToken);
         return accessToken.toString();
     }

@@ -1,7 +1,7 @@
 package com.application.weixin.model;
 
 
-public abstract class Result {
+public abstract class Result<T> {
 
     public static final String SUCCESS = "0";
     public static final String ERROR = "1";
@@ -9,6 +9,8 @@ public abstract class Result {
     private String resultStatus;
     private Integer errcode;
     private String errmsg;
+
+    private T value;
 
     public String getResultStatus() {
         return resultStatus;
