@@ -1,14 +1,17 @@
 package com.application.weixin.service.impl;
 
 import com.application.weixin.AccessTokenHolder;
+import com.application.weixin.exception.JWeixinException;
+import com.application.weixin.exception.ParamCheckException;
+import com.application.weixin.exception.WeixinException;
 import com.application.weixin.model.AccessToken;
-import com.application.weixin.model.StringResult;
 import com.application.weixin.model.Token;
 import com.application.weixin.service.TokenService;
 import com.application.weixin.util.HttpRequest;
 import com.application.weixin.util.Util;
 import com.google.gson.stream.JsonReader;
 
+import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.function.Supplier;
 
@@ -17,19 +20,23 @@ public class TokenServiceImpl implements TokenService {
 
 
     @Override
-    public Token fetchAccessToken(Class<? extends Token> tokenType, String appId, String secret) throws Exception {
+    public Token fetchAccessToken(Class<? extends Token> tokenType, String appId, String secret) throws JWeixinException {
 
         if (Util.paramNullValueCheck(appId, secret)) {
-            //@TODO 缺少专用的异常类型
-            throw new Exception("参数检验失败");
+            throw new ParamCheckException();
         }
 
-        Token accessToken = AccessTokenHolder.getBasicAccessToken(tokenType);
+        Token accessToken;
+        try {
+            accessToken = AccessTokenHolder.getBasicAccessToken(tokenType);
+        } catch (Exception e) {
+            throw new JWeixinException(e.getMessage(), e);
+        }
         if (accessToken.getStatus().equals(AccessToken.STATUS_AVAILABLE)) {
             return accessToken;
         } else if (accessToken.getStatus().equals(AccessToken.STATUS_AUTHORIZATION_REQUIiRED)) {
             String url = "https://api.weixin.qq.com/cgi-bin/token";
-            String param = "grant_type=client_credential&" + appId + "=" + secret + "&secret=#{secret}";
+            String param = "grant_type=client_credential&appid=" + appId + "&secret=" + secret;
             try (JsonReader jsonReader = HttpRequest.sendGet(url, param)) {
                 jsonReader.beginObject();
                 while (jsonReader.hasNext()) {
@@ -39,45 +46,54 @@ public class TokenServiceImpl implements TokenService {
                     } else if ("expires_in".equals(name)) {
                         accessToken.setExpiresIn(jsonReader.nextInt());
                     } else if ("errcode".equals(name)) {
-                        //@TODO 抛出相应异常
-                    } else if ("errmsg".equals(name)) {
-                        //@TODO 抛出相应异常
+                        throw new WeixinException(jsonReader.nextInt());
                     } else {
                         jsonReader.nextString();
                     }
                 }
                 jsonReader.endObject();
+            } catch (IOException e) {
+                throw new JWeixinException(e.getMessage(), e);
             }
         }
         return accessToken;
     }
 
     @Override
-    public StringResult fetchPageAccessTokenUrl(String appId, String redirectUrl, String scope, String state) throws Exception {
+    public String fetchPageAccessTokenUrl(String appId, String redirectUrl, String scope, String state) throws JWeixinException {
         if (Util.paramNullValueCheck(appId, redirectUrl, scope, state)) {
-            //@TODO 缺少专用的异常类型
-            throw new Exception("参数检验失败");
+            throw new ParamCheckException();
         }
 
-        redirectUrl = URLEncoder.encode(redirectUrl, "UTF-8");
+        try {
+            redirectUrl = URLEncoder.encode(redirectUrl, "UTF-8");
+        } catch (Exception e) {
+            throw new JWeixinException(e.getMessage(), e);
+        }
 
-        return new StringResult("https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + appId + "&redirect_uri=" + redirectUrl + "&response_type=code&scope=" + scope + "&state=" + state + "#wechat_redirect");
+        return "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + appId + "&redirect_uri=" + redirectUrl + "&response_type=code&scope=" + scope + "&state=" + state + "#wechat_redirect";
     }
 
     @Override
-    public Token fetchPageAccessToken(Class<? extends Token> tokenType, String appId, String secret, String code) throws Exception {
+    public Token fetchPageAccessToken(Class<? extends Token> tokenType, String appId, String secret, String code) throws JWeixinException {
         if (Util.paramNullValueCheck(appId, secret, code)) {
-            //@TODO 缺少专用的异常类型
-            throw new Exception("参数检验失败");
+            throw new ParamCheckException();
         }
 
-        Token accessToken = AccessTokenHolder.getPageAccessToken(tokenType);
+        Token accessToken;
+        try {
+            accessToken = AccessTokenHolder.getPageAccessToken(tokenType);
+        } catch (Exception e) {
+            throw new JWeixinException(e.getMessage(), e);
+        }
 
         String tokenUrl = "https://api.weixin.qq.com/sns/oauth2/access_token";
         String tokenParam = "appid=" + appId + "&secret=" + secret + "&code=" + code + "&grant_type=authorization_code";
 
-        try (JsonReader jsonReader = HttpRequest.sendGet(tokenUrl, tokenParam.toString())) {
+        try (JsonReader jsonReader = HttpRequest.sendGet(tokenUrl, tokenParam)) {
             fillPageAccessToken(accessToken, jsonReader);
+        } catch (IOException e) {
+            throw new JWeixinException(e.getMessage(), e);
         }
 
         accessToken.setStatus(Token.STATUS_REFRESH_TOKEN_REQUIRED);
@@ -86,19 +102,13 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public Token fetchPageAccessToken(Supplier<? extends Token> supplier) throws Exception {
-        return AccessTokenHolder.getPageAccessToken(supplier);
-    }
-
-    @Override
-    public Token refreshPageAccessToken(Class<? extends Token> tokenType, String appId, String refreshToken) throws Exception {
+    public Token refreshPageAccessToken(Class<? extends Token> tokenType, String appId, String refreshToken) throws JWeixinException {
 
         if (Util.paramNullValueCheck(appId, refreshToken)) {
-            //@TODO 缺少专用的异常类型
-            throw new Exception("参数检验失败");
+            throw new ParamCheckException();
         }
 
-        Token accessToken = AccessTokenHolder.getPageAccessToken(tokenType);
+        Token accessToken = AccessTokenHolder.getPageAccessToken(AccessToken::new);
 
         String refreshUrl = "https://api.weixin.qq.com/sns/oauth2/refresh_token";
         String refreshParam = "appid=" + appId + "&grant_type=refresh_token&refresh_token=" + refreshToken;
@@ -106,6 +116,8 @@ public class TokenServiceImpl implements TokenService {
 
         try (JsonReader jsonReader = HttpRequest.sendGet(refreshUrl, refreshParam)) {
             fillPageAccessToken(accessToken, jsonReader);
+        } catch (IOException e) {
+            throw new JWeixinException(e.getMessage(), e);
         }
 
         accessToken.setStatus(AccessToken.STATUS_REFRESH_TOKEN_REQUIRED);
@@ -114,7 +126,7 @@ public class TokenServiceImpl implements TokenService {
     }
 
 
-    private void fillPageAccessToken(Token accessToken, JsonReader jsonReader) throws Exception {
+    private void fillPageAccessToken(Token accessToken, JsonReader jsonReader) throws JWeixinException, IOException {
         jsonReader.beginObject();
         while (jsonReader.hasNext()) {
             String name = jsonReader.nextName();
@@ -129,9 +141,7 @@ public class TokenServiceImpl implements TokenService {
             } else if (name.equals("scope")) {
                 accessToken.setScope(jsonReader.nextString());
             } else if (name.equals("errcode")) {
-                //@TODO 抛出相应的异常
-            } else if (name.equals("errmsg")) {
-                //@TODO 抛出相应的异常
+                throw new WeixinException(jsonReader.nextInt());
             } else if (name.equals("unionid")) {
                 accessToken.setUnionid(jsonReader.nextString());
             } else {
@@ -139,6 +149,15 @@ public class TokenServiceImpl implements TokenService {
             }
         }
         jsonReader.endObject();
+    }
+
+    @Override
+    public Token fetchPageAccessToken(Supplier<? extends Token> supplier, String appId) throws Exception {
+        Token token = AccessTokenHolder.getPageAccessToken(supplier);
+        if (token.getScope().equals(Token.PAGE_SCOPE_SNSAPI_USERINFO) && !token.isRefreshTokenExpires()) {
+            token = refreshPageAccessToken(token.getClass(), appId, token.getRefreshToken());
+        }
+        return token;
     }
 }
 

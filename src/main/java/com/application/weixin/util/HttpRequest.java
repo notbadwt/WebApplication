@@ -2,15 +2,17 @@ package com.application.weixin.util;
 
 import com.google.gson.stream.JsonReader;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by Administrator on 2017/2/16 0016.
- */
+import static com.application.weixin.util.Util.closeQuietly;
+
 public class HttpRequest {
     /**
      * 向指定URL发送GET方法的请求
@@ -76,23 +78,6 @@ public class HttpRequest {
             throw e;
         } finally {
             closeQuietly(out);
-        }
-    }
-
-
-    public static void closeQuietly(Closeable... closeables) throws IOException {
-        try {
-            if (closeables != null) {
-                for (Closeable closeable : closeables) {
-                    if (closeable != null) {
-                        closeable.close();
-                    }
-                }
-            }
-        } catch (IOException e) {
-            //@TODO 记录日志 这里需要等待日志框架的上线
-            System.out.println("关闭io资源时出错！ " + e);
-            throw e;
         }
     }
 

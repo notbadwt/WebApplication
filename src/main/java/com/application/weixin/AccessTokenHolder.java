@@ -22,8 +22,6 @@ import static com.application.weixin.model.Token.*;
  */
 public class AccessTokenHolder {
 
-    private static final String ACCESS_TOKEN_TYPE_PAGE = "0";
-    private static final String ACCESS_TOKEN_TYPE_BASIC = "1";
 
     private static Token basicAccessToken = null;
 
@@ -51,9 +49,7 @@ public class AccessTokenHolder {
         predicate = Token::isExpires;
 
 
-        //重要：在该类内部只能设置unavailable的值，不允许设置available值
         if (accessToken != null && accessToken.getStatus().equals(availableStatus) && !predicate.test(accessToken)) {
-//            accessToken.setStatus(availableStatus);
             return accessToken;
         } else if (accessToken == null) {
             accessToken = tokenType.newInstance();

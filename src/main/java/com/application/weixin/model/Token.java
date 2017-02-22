@@ -8,6 +8,10 @@ public interface Token {
     String STATUS_REFRESH_TOKEN_REQUIRED = "refreshTokenRequired"; // 需要刷新token（网页授权使用）
     String STATUS_AUTHORIZATION_REQUIiRED = "authorization required"; // 需要授权
 
+    String PAGE_SCOPE_SNSAPI_BASE = "snsapi_base";
+    String PAGE_SCOPE_SNSAPI_USERINFO = "snsapi_userinfo";
+
+
 
     Boolean isExpires();
 

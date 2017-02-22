@@ -1,7 +1,7 @@
 package com.application.weixin;
 
 import com.application.weixin.model.AccessToken;
-import com.application.weixin.model.StringResult;
+import com.application.weixin.model.Result;
 import com.application.weixin.model.Token;
 import com.application.weixin.service.TokenService;
 
@@ -46,37 +46,31 @@ public class Weixin {
     }
 
 
-
-    public StringResult getPageAccessTokenUrl(String redirectUrl, String scope, String state) throws Exception {
-        return tokenService.fetchPageAccessTokenUrl(appId, redirectUrl, scope, state);
+    public Result<String> getPageAccessTokenUrl(String redirectUrl, String scope, String state) throws Exception {
+        return new Result<>(tokenService.fetchPageAccessTokenUrl(appId, redirectUrl, scope, state));
     }
 
-    public Token getPageAccessToken(String code) throws Exception {
-        return tokenService.fetchPageAccessToken(tokenType, appId, secret, code);
+    public Result<Token> getPageAccessToken(String code) throws Exception {
+        return new Result<>(tokenService.fetchPageAccessToken(tokenType, appId, secret, code));
     }
 
-    public Token getPageAccessToken(Supplier<? extends Token> supplier) throws Exception {
-        Token currentAccessToken = tokenService.fetchPageAccessToken(supplier);
+    public Result<Token> getPageAccessToken(Supplier<? extends Token> supplier) throws Exception {
+        Token currentAccessToken = tokenService.fetchPageAccessToken(supplier, appId);
         if (currentAccessToken.getStatus().equals(AccessToken.STATUS_REFRESH_TOKEN_REQUIRED)) {
-            return tokenService.refreshPageAccessToken(tokenType, appId, currentAccessToken.getRefreshToken());
+            return new Result<>(tokenService.refreshPageAccessToken(tokenType, appId, currentAccessToken.getRefreshToken()));
         } else {
-            return currentAccessToken;
+            return new Result<>(currentAccessToken);
         }
     }
 
-    public Token refreshPageAccessToken(String refreshToken) throws Exception {
-        return tokenService.refreshPageAccessToken(tokenType, appId, refreshToken);
+    public Result<Token> refreshPageAccessToken(String refreshToken) throws Exception {
+        return new Result<>(tokenService.refreshPageAccessToken(tokenType, appId, refreshToken));
     }
 
 
-
-
-    public Token getAccessToken() throws Exception {
-        return tokenService.fetchAccessToken(tokenType, appId, secret);
+    public Result<Token> getAccessToken() throws Exception {
+        return new Result<>(tokenService.fetchAccessToken(tokenType, appId, secret));
     }
-
-
-
 
 
     public String getAppId() {

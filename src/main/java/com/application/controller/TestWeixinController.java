@@ -32,7 +32,7 @@ public class TestWeixinController {
         String weixinCode = request.getParameter("code");
 //        String wexinState = request.getParameter("state");
         String openId;
-        Token accessToken = weixin.getPageAccessToken(AccessToken::new);
+        Token accessToken = weixin.getPageAccessToken(AccessToken::new).getValue();
         if (accessToken.getStatus().
 
                 equals(AccessToken.STATUS_REFRESH_TOKEN_REQUIRED))
@@ -56,7 +56,7 @@ public class TestWeixinController {
                 return "redirect:" + url;
             } else {
                 System.out.println("weixinCode : " + weixinCode);
-                accessToken = weixin.getPageAccessToken(weixinCode);
+                accessToken = weixin.getPageAccessToken(weixinCode).getValue();
                 openId = accessToken.getOpenid();
                 model.addAttribute("openid", openId);
                 model.addAttribute("function", "new");
@@ -65,7 +65,7 @@ public class TestWeixinController {
         }
     }
 
-    public  AccessToken getCurrenAccessToken() {
+    public AccessToken getCurrenAccessToken() {
         return null;
     }
 
@@ -105,7 +105,7 @@ public class TestWeixinController {
     @ResponseBody
     public String getPageAccessToken(HttpServletRequest request) throws Exception {
         String code = request.getParameter("code");
-        Token accessToken = weixin.getPageAccessToken(code);
+        Token accessToken = weixin.getPageAccessToken(code).getValue();
         System.out.println(accessToken);
         return accessToken.toString();
     }
