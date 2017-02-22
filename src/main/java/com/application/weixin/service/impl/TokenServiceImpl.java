@@ -152,7 +152,7 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public Token fetchPageAccessToken(Supplier<? extends Token> supplier, String appId) throws Exception {
+    public Token fetchPageAccessToken(Supplier<? extends Token> supplier, String appId) throws JWeixinException {
         Token token = AccessTokenHolder.getPageAccessToken(supplier);
         if (token.getScope().equals(Token.PAGE_SCOPE_SNSAPI_USERINFO) && !token.isRefreshTokenExpires()) {
             token = refreshPageAccessToken(token.getClass(), appId, token.getRefreshToken());

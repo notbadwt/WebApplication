@@ -29,7 +29,6 @@ public class TestWeixinController {
     @RequestMapping({"/getOpenidResult"})
     public String getOpenIdResult(HttpServletRequest request, Model model) throws Exception {
         String weixinCode = request.getParameter("code");
-//        String wexinState = request.getParameter("state");
         String openId;
         Token accessToken = weixin.getPageAccessToken(AccessToken::new).getValue();
         if (accessToken.getStatus().
@@ -42,9 +41,7 @@ public class TestWeixinController {
             model.addAttribute("openid", openId);
             model.addAttribute("function", "refresh");
             return "/weixin";
-        } else
-
-        {
+        } else {
             if (weixinCode == null || "".equals(weixinCode)) {
                 //需要通过网页授权从新获取token
                 String redirectUrl = "http://mall.efeiyi.com/application/getOpenidResult";
