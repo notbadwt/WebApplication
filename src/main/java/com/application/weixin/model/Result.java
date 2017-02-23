@@ -1,6 +1,9 @@
 package com.application.weixin.model;
 
-
+/**
+ * 结果容器，Weixin类型对象所有对外的业务接口返回都所使用Result来包装
+ * @param <T> 结果值得类型参数
+ */
 public class Result<T> {
 
     public static final String SUCCESS = "0";

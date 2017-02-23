@@ -24,6 +24,7 @@ import java.util.function.Supplier;
  */
 public class Weixin {
 
+    //@TODO 用于添加权限，每种公众号的访问接口权限不一样
     public static final WeixinType TYPE_FUWUHAO = WeixinType.FUWUHAO;
     public static final WeixinType TYPE_DINGYUEHAO = WeixinType.DINGYUEHAO;
 
@@ -139,12 +140,6 @@ public class Weixin {
     }
 
 
-
-
-
-
-
-
     public String getAppId() {
         return appId;
     }
@@ -181,8 +176,9 @@ public class Weixin {
         return tokenType;
     }
 
-    public void setTokenType(Class<? extends Token> tokenType) {
+    public Weixin setTokenType(Class<? extends Token> tokenType) {
         this.tokenType = tokenType;
+        return this;
     }
 
     public enum WeixinType {
