@@ -2,6 +2,7 @@ package com.application.weixin;
 
 import com.application.weixin.model.Token;
 
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -24,6 +25,16 @@ public class AccessTokenHolder {
 
 
     private static Token basicAccessToken = null;
+
+    private static ConcurrentHashMap<String, Token> tokenCache = new ConcurrentHashMap<>();
+
+    public static Token getTokenFromCache(String key) {
+        return tokenCache.get(key);
+    }
+
+    public static void cacheToken(String key, Token value) {
+        tokenCache.put(key, value);
+    }
 
 
     public static Token getPageAccessToken(Supplier<? extends Token> accessTokenSupplier) {

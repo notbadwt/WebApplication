@@ -12,6 +12,5 @@
 </head>
 <body>
 ${openid}
-${function}
 </body>
 </html>

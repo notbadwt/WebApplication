@@ -22,6 +22,7 @@ import java.util.function.Supplier;
  * 负责调用封装好的各个模块的接口，并且在本层处理异常，并返回该外城对应的错误码以及错误信息
  * 外部调用weixin类对象的时候需要判断返回结果，所有返回结果都是Result容器类，便于外部方便处理返回值，保证返回值类型的统一
  */
+//@TODO 所有异常处理的位置都要做日志记录
 public class Weixin {
 
     //@TODO 用于添加权限，每种公众号的访问接口权限不一样
@@ -96,7 +97,7 @@ public class Weixin {
         Token currentAccessToken;
         try {
             currentAccessToken = tokenService.fetchPageAccessToken(supplier, appId);
-            if (currentAccessToken.getStatus().equals(AccessToken.STATUS_REFRESH_TOKEN_REQUIRED)) {
+            if (currentAccessToken != null && currentAccessToken.getStatus().equals(AccessToken.STATUS_REFRESH_TOKEN_REQUIRED)) {
                 return new Result<>(tokenService.refreshPageAccessToken(tokenType, appId, currentAccessToken.getRefreshToken()));
             } else {
                 return new Result<>(currentAccessToken);
