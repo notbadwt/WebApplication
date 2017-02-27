@@ -19,6 +19,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Collections;
@@ -184,6 +187,19 @@ public class TestWeixinController {
         String nonce = request.getParameter("nonce");
         String echostr = request.getParameter("echostr");
 
+
+        StringBuilder resultData = new StringBuilder();
+        InputStream requestStream = request.getInputStream();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(requestStream));
+        String line;
+        while ((line = reader.readLine()) != null) {
+            resultData.append(line);
+        }
+
+        System.out.println("");
+        System.out.println(resultData.toString());
+        System.out.println("");
+
         boolean isCheckToken = false;
 
         PrintWriter printWriter = response.getWriter();
@@ -200,13 +216,7 @@ public class TestWeixinController {
             System.out.println("hashcode: " + hashcode);
             System.out.println("signature: " + signature);
             System.out.println("echostr: " + echostr);
-            if (signature.equals(hashcode)) {
-                isCheckToken = true;
-            } else {
-                isCheckToken = false;
-            }
-        } else {
-            isCheckToken = false;
+            isCheckToken = signature.equals(hashcode);
         }
 
         if (isCheckToken) {
@@ -214,7 +224,6 @@ public class TestWeixinController {
             printWriter.flush();
             printWriter.close();
         }
-
 
 
     }
