@@ -1,6 +1,12 @@
 package com.application.weixin.model;
 
 
+/**
+ * token是个多个线程共有的对象，需要保证其线程安全性，或者，禁止外部程序修改其内容
+ * 有关于token的操作需要做一些调整，
+ * 1.把token相关的域变为不可变的
+ * 2.去掉status属性，某个token对象的状态是根据系统当前时间以及token对象自身的状态决定，token对象是个不可变状态对象
+ */
 public interface Token {
 
     String STATUS_AVAILABLE = "available";  //可用
@@ -19,30 +25,15 @@ public interface Token {
 
     Integer getExpiresIn();
 
-    void setExpiresIn(Integer expiresIn);
-
     String getAccessToken();
-
-    void setAccessToken(String accessToken);
-
-    String getStatus();
-
-    void setStatus(String status);
 
     String getRefreshToken();
 
-    void setRefreshToken(String refreshToken);
-
     String getScope();
-
-    void setScope(String scope);
 
     String getOpenid();
 
-    void setOpenid(String openid);
-
     String getUnionid();
 
-    void setUnionid(String unionid);
 
 }

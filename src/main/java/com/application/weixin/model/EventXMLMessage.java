@@ -10,7 +10,7 @@ public class EventXMLMessage extends XMLMessage {
     private String ticket;      //二维码的ticket 可以用来换取二维码图片
     private String latitude;    //地理位置纬度
     private String longitude;   //地理位置经度
-    private String precicion;   //地理位置精度
+    private String precision;   //地理位置精度
 
     public String getEvent() {
         return event;
@@ -52,11 +52,11 @@ public class EventXMLMessage extends XMLMessage {
         this.longitude = longitude;
     }
 
-    public String getPrecicion() {
-        return precicion;
+    public String getPrecision() {
+        return precision;
     }
 
-    public void setPrecicion(String precicion) {
-        this.precicion = precicion;
+    public void setPrecision(String precision) {
+        this.precision = precision;
     }
 }

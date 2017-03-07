@@ -20,31 +20,30 @@ public class TokenServiceImpl implements TokenService {
 
 
     @Override
-    public Token fetchAccessToken(Class<? extends Token> tokenType, String appId, String secret) throws JWeixinException {
+    public AccessToken fetchAccessToken(String appId, String secret) throws JWeixinException {
 
         if (Util.paramNullValueCheck(appId, secret)) {
             throw new ParamCheckException();
         }
 
-        Token accessToken;
-        try {
-            accessToken = AccessTokenHolder.getBasicAccessToken(tokenType);
-        } catch (Exception e) {
-            throw new JWeixinException(e.getMessage(), e);
-        }
-        if (accessToken.getStatus().equals(AccessToken.STATUS_AVAILABLE)) {
+        AccessToken accessToken;
+        accessToken = AccessTokenHolder.getBasicAccessToken();
+        if (accessToken != null) {
             return accessToken;
-        } else if (accessToken.getStatus().equals(AccessToken.STATUS_AUTHORIZATION_REQUIiRED)) {
+        } else {
             String url = "https://api.weixin.qq.com/cgi-bin/token";
             String param = "grant_type=client_credential&appid=" + appId + "&secret=" + secret;
+            String tokenStr = "";
+            int expiresIn = 0;
+
             try (JsonReader jsonReader = HttpRequest.sendGet(url, param)) {
                 jsonReader.beginObject();
                 while (jsonReader.hasNext()) {
                     String name = jsonReader.nextName();
                     if ("access_token".equals(name)) {
-                        accessToken.setAccessToken(jsonReader.nextString());
+                        tokenStr = jsonReader.nextString();
                     } else if ("expires_in".equals(name)) {
-                        accessToken.setExpiresIn(jsonReader.nextInt());
+                        expiresIn = jsonReader.nextInt();
                     } else if ("errcode".equals(name)) {
                         throw new WeixinException(jsonReader.nextInt());
                     } else {
@@ -55,6 +54,9 @@ public class TokenServiceImpl implements TokenService {
             } catch (IOException e) {
                 throw new JWeixinException(e.getMessage(), e);
             }
+
+            accessToken = AccessTokenHolder.createNewBasicAccessToken(tokenStr, expiresIn);
+
         }
         return accessToken;
     }
@@ -75,17 +77,12 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public Token fetchPageAccessToken(Class<? extends Token> tokenType, String appId, String secret, String code) throws JWeixinException {
+    public AccessToken fetchPageAccessToken(String appId, String secret, String code) throws JWeixinException {
         if (Util.paramNullValueCheck(appId, secret, code)) {
             throw new ParamCheckException();
         }
 
-        Token accessToken;
-        try {
-            accessToken = AccessTokenHolder.getPageAccessToken(tokenType);
-        } catch (Exception e) {
-            throw new JWeixinException(e.getMessage(), e);
-        }
+        AccessToken accessToken = new AccessToken();
 
         String tokenUrl = "https://api.weixin.qq.com/sns/oauth2/access_token";
         String tokenParam = "appid=" + appId + "&secret=" + secret + "&code=" + code + "&grant_type=authorization_code";
@@ -96,20 +93,19 @@ public class TokenServiceImpl implements TokenService {
             throw new JWeixinException(e.getMessage(), e);
         }
 
-        accessToken.setStatus(Token.STATUS_REFRESH_TOKEN_REQUIRED);
+        accessToken = AccessTokenHolder.createNewPageAccessToken(accessToken.getOpenid(),accessToken.getAccessToken(),accessToken.getExpiresIn(),accessToken.getRefreshToken(),accessToken.getScope(),accessToken.getOpenid(),accessToken.getUnionid());
 
         return accessToken;
     }
 
     @Override
-    public Token refreshPageAccessToken(Class<? extends Token> tokenType, String appId, String refreshToken) throws JWeixinException {
+    public AccessToken refreshPageAccessToken(String appId, String refreshToken) throws JWeixinException {
 
         if (Util.paramNullValueCheck(appId, refreshToken)) {
             throw new ParamCheckException();
         }
 
-        Token accessToken = AccessTokenHolder.getPageAccessToken(AccessToken::new);
-
+        AccessToken accessToken = new AccessToken();
         String refreshUrl = "https://api.weixin.qq.com/sns/oauth2/refresh_token";
         String refreshParam = "appid=" + appId + "&grant_type=refresh_token&refresh_token=" + refreshToken;
 
@@ -120,13 +116,13 @@ public class TokenServiceImpl implements TokenService {
             throw new JWeixinException(e.getMessage(), e);
         }
 
-        accessToken.setStatus(AccessToken.STATUS_REFRESH_TOKEN_REQUIRED);
+        accessToken = AccessTokenHolder.createNewPageAccessToken(accessToken.getOpenid(),accessToken.getAccessToken(),accessToken.getExpiresIn(),accessToken.getRefreshToken(),accessToken.getScope(),accessToken.getOpenid(),accessToken.getUnionid());
 
         return accessToken;
     }
 
 
-    private void fillPageAccessToken(Token accessToken, JsonReader jsonReader) throws JWeixinException, IOException {
+    private void fillPageAccessToken(AccessToken accessToken, JsonReader jsonReader) throws JWeixinException, IOException {
         jsonReader.beginObject();
         while (jsonReader.hasNext()) {
             String name = jsonReader.nextName();
@@ -152,10 +148,10 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public Token fetchPageAccessToken(Supplier<? extends Token> supplier, String appId) throws JWeixinException {
-        Token token = AccessTokenHolder.getPageAccessToken(supplier);
-        if (token != null && token.getScope().equals(Token.PAGE_SCOPE_SNSAPI_USERINFO) && !token.isRefreshTokenExpires()) {
-            token = refreshPageAccessToken(token.getClass(), appId, token.getRefreshToken());
+    public AccessToken fetchPageAccessToken(Supplier<String> keySupplier, String appId) throws JWeixinException {
+        AccessToken token = AccessTokenHolder.getPageAccessToken(keySupplier.get());
+        if (token != null && token.getScope().equals(AccessToken.PAGE_SCOPE_SNSAPI_USERINFO) && !token.isRefreshTokenExpires()) {
+            token = refreshPageAccessToken(appId, token.getRefreshToken());
         }
         return token;
     }

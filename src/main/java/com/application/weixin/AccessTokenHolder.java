@@ -1,77 +1,62 @@
 package com.application.weixin;
 
-import com.application.weixin.model.Token;
+import com.application.weixin.exception.JWeixinException;
+import com.application.weixin.model.AccessToken;
 
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-
-import static com.application.weixin.model.Token.*;
 
 
 /**
- * AccessTokenHolder的最新职责
- * 1.负责管理basicAccessToken的统一管理与共享功能
- * 2.负责管理PageAccessToken的业务处理功能，提供相应的回调接口，每一个PageAccessToken都是一个临时的token，只是通过用户来识别
- * <p>
- * AccessTokenHolder的之前的职责：
- * 1.提供BasicAccessToken 以及 PageAccessToken的初始化以及单例的功能
- * 2.判断当前Token的不同状态来确认Token应该保持的状态，如果是空就返回一个新的初始化的token，状态时unavailable，如果已经过期，将状态改为unavailable并且返回
- * <p>
- * AccessTokenHolder的改变
- * 1.保留basicAccessToken的原有功能，将PageAccessToken放入新的接口中
+ * Token缓存管理
  */
 public class AccessTokenHolder {
 
 
-    private static Token basicAccessToken = null;
+    /**
+     * 基本授权缓存 全局共享
+     */
+    private static AccessToken basicAccessToken = null;
 
-    private static ConcurrentHashMap<String, Token> tokenCache = new ConcurrentHashMap<>();
+    /**
+     * 网页授权token的缓存
+     */
+    private static ConcurrentHashMap<String, AccessToken> tokenCache = new ConcurrentHashMap<>();
 
-    public static Token getTokenFromCache(String key) {
-        return tokenCache.get(key);
+    public static AccessToken getPageAccessToken(String key) throws JWeixinException {
+
+        return cloneAccessToken(tokenCache.get(key));
     }
 
-    public static void cacheToken(String key, Token value) {
-        tokenCache.put(key, value);
+
+    public static AccessToken createNewPageAccessToken(String key, String tokenStr, Integer expiresIn, String refreshTokenStr, String scope, String openId, String unionid) throws JWeixinException {
+        AccessToken pageAccessToken = new AccessToken(expiresIn, tokenStr, refreshTokenStr, scope, openId, unionid);
+        tokenCache.put(key, pageAccessToken);
+        return cloneAccessToken(pageAccessToken);
     }
 
 
-    public static Token getPageAccessToken(Supplier<? extends Token> accessTokenSupplier) {
-        return accessTokenSupplier.get();
+    public static AccessToken createNewBasicAccessToken(String tokenStr, Integer expiresIn) throws JWeixinException {
+        basicAccessToken = new AccessToken(expiresIn, tokenStr);
+        return getBasicAccessToken();
     }
 
-    public static Token getPageAccessToken(Class<? extends Token> tokenType) throws Exception {
-        Token token = tokenType.newInstance();
-        token.setStatus(STATUS_PAGE_AUTHORIZATION_REQUIRED);
-        return token;
-    }
 
-    public static Token getBasicAccessToken(Class<? extends Token> tokenType) throws Exception {
-        String availableStatus;
-        String unavailableStatus;
-        Token accessToken;
+    public static AccessToken getBasicAccessToken() throws JWeixinException {
 
-        Predicate<? super Token> predicate;
-
-        availableStatus = STATUS_AVAILABLE;
-        unavailableStatus = STATUS_AUTHORIZATION_REQUIiRED;
-        accessToken = basicAccessToken;
-        predicate = Token::isExpires;
-
-
-        if (accessToken != null && accessToken.getStatus().equals(availableStatus) && !predicate.test(accessToken)) {
-            return accessToken;
-        } else if (accessToken == null) {
-            accessToken = tokenType.newInstance();
-            accessToken.setStatus(unavailableStatus);
-            basicAccessToken = accessToken;
-            return accessToken;
+        if (basicAccessToken != null && basicAccessToken.isAvailable()) {
+            return cloneAccessToken(basicAccessToken);
         } else {
-            accessToken.setStatus(unavailableStatus);
-            return accessToken;
+            return null;
         }
+    }
 
-
+    private static AccessToken cloneAccessToken(AccessToken accessToken) throws JWeixinException {
+        AccessToken result;
+        try {
+            result = accessToken.clone();
+        } catch (Exception e) {
+            throw new JWeixinException("系统异常", e);
+        }
+        return result;
     }
 }

@@ -33,7 +33,6 @@ public class Weixin {
     private String appId;
     private String secret;
     private WeixinType type;
-    private Class<? extends Token> tokenType;
 
     private TokenService tokenService;
 
@@ -74,10 +73,10 @@ public class Weixin {
      * @param code 用户授权的code
      * @return 借口调用凭证以及一些附带信息
      */
-    public Result<Token> getPageAccessToken(String code) {
-        Token token;
+    public Result<AccessToken> getPageAccessToken(String code) {
+        AccessToken token;
         try {
-            token = tokenService.fetchPageAccessToken(tokenType, appId, secret, code);
+            token = tokenService.fetchPageAccessToken( appId, secret, code);
             return new Result<>(token);
         } catch (JWeixinException e) {
             return new Result<>(e.getErrcode(), e.getErrmsg());
@@ -90,18 +89,14 @@ public class Weixin {
      * 通过提供“用户识别器”来获取缓冲中的某个用户的Token，如果该token是用户获取用户信息，并且refresh_token没有过期，那么久直接刷新token，然后返回新的token
      * 注意，这里返回的Token同步更新到系统的缓存中替换之前的token
      *
-     * @param supplier 用户识别器的一个函数式接口
+     * @param keySupplier 用户识别器的一个函数式接口
      * @return 缓存的或者经过刷新的token
      */
-    public Result<Token> getPageAccessToken(Supplier<? extends Token> supplier) {
-        Token currentAccessToken;
+    public Result<AccessToken> getPageAccessToken(Supplier<String> keySupplier) {
+        AccessToken currentAccessToken;
         try {
-            currentAccessToken = tokenService.fetchPageAccessToken(supplier, appId);
-            if (currentAccessToken != null && currentAccessToken.getStatus().equals(AccessToken.STATUS_REFRESH_TOKEN_REQUIRED)) {
-                return new Result<>(tokenService.refreshPageAccessToken(tokenType, appId, currentAccessToken.getRefreshToken()));
-            } else {
+            currentAccessToken = tokenService.fetchPageAccessToken(keySupplier, appId);
                 return new Result<>(currentAccessToken);
-            }
         } catch (JWeixinException e) {
             return new Result<>(e.getErrcode(), e.getErrmsg());
         }
@@ -114,10 +109,10 @@ public class Weixin {
      * @param refreshToken refreshToken的值，可以从网页授权获取的token对象中获得，或者从系统缓存的token中获得
      * @return 更新完成的token对象，如果出错，返回形式将以错误码和错误信息返回，该类所有对外的微信接口的返回格式都是如此，其他接口不再赘述
      */
-    public Result<Token> refreshPageAccessToken(String refreshToken) {
-        Token token;
+    public Result<AccessToken> refreshPageAccessToken(String refreshToken) {
+        AccessToken token;
         try {
-            token = tokenService.refreshPageAccessToken(tokenType, appId, refreshToken);
+            token = tokenService.refreshPageAccessToken(appId, refreshToken);
             return new Result<>(token);
         } catch (JWeixinException e) {
             return new Result<>(e.getErrcode(), e.getErrmsg());
@@ -130,10 +125,10 @@ public class Weixin {
      *
      * @return 基本调用凭证对象
      */
-    public Result<Token> getAccessToken() {
-        Token token;
+    public Result<AccessToken> getAccessToken() {
+        AccessToken token;
         try {
-            token = tokenService.fetchAccessToken(tokenType, appId, secret);
+            token = tokenService.fetchAccessToken( appId, secret);
             return new Result<>(token);
         } catch (JWeixinException e) {
             return new Result<>(e.getErrcode(), e.getErrmsg());
@@ -173,14 +168,6 @@ public class Weixin {
         this.tokenService = tokenService;
     }
 
-    public Class<? extends Token> getTokenType() {
-        return tokenType;
-    }
-
-    public Weixin setTokenType(Class<? extends Token> tokenType) {
-        this.tokenType = tokenType;
-        return this;
-    }
 
     public enum WeixinType {
 

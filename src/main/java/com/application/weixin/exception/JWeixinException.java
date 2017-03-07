@@ -23,6 +23,7 @@ public class JWeixinException extends Exception {
 
     public JWeixinException(String message, Throwable cause) {
         super(message, cause);
+        errcode = EXCEPTION_SYSTEM;
     }
 
     public Integer getErrcode() {
