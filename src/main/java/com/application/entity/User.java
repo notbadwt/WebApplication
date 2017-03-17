@@ -4,9 +4,7 @@ import com.application.security.model.UserDetails;
 
 import java.util.List;
 
-/**
- * Created by WangTao on 2016/11/29.
- */
+
 public class User implements UserDetails {
 
     private String id;
