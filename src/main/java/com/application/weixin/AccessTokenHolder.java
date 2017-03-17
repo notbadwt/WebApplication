@@ -35,9 +35,13 @@ public class AccessTokenHolder {
     }
 
 
-    public static AccessToken createNewBasicAccessToken(String tokenStr, Integer expiresIn) throws JWeixinException {
-        basicAccessToken = new AccessToken(expiresIn, tokenStr);
-        return getBasicAccessToken();
+    public synchronized static AccessToken createNewBasicAccessToken(String tokenStr, Integer expiresIn) throws JWeixinException {
+        if (basicAccessToken != null && basicAccessToken.isAvailable()) {
+            return cloneAccessToken(basicAccessToken);
+        } else {
+            basicAccessToken = new AccessToken(expiresIn, tokenStr);
+            return cloneAccessToken(basicAccessToken);
+        }
     }
 
 

@@ -2,6 +2,8 @@ package com.application.entity;
 
 import com.application.security.model.UserDetails;
 
+import java.util.List;
+
 /**
  * Created by WangTao on 2016/11/29.
  */
@@ -16,6 +18,8 @@ public class User implements UserDetails {
     private String unionId;
     private Long createDatetime;
     private Long lastLoginDatetime;
+
+    private List<UserDocument> userDocumentList;
 
     public String getUnionId() {
         return unionId;
@@ -86,6 +90,15 @@ public class User implements UserDetails {
     }
 
     public void setLastLoginDatetime(Long lastLoginDatetime) {
+
         this.lastLoginDatetime = lastLoginDatetime;
+    }
+
+    public List<UserDocument> getUserDocumentList() {
+        return userDocumentList;
+    }
+
+    public void setUserDocumentList(List<UserDocument> userDocumentList) {
+        this.userDocumentList = userDocumentList;
     }
 }

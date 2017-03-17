@@ -25,5 +25,8 @@
         <typeAlias alias="User" type="com.application.entity.User"/>
         <typeAlias alias="Role" type="com.application.entity.Role"/>
         <typeAlias alias="Permission" type="com.application.entity.Permission"/>
+        <typeAlias alias="UserBaseInfo" type="com.application.entity.UserBaseInfo"/>
+        <typeAlias alias="UserDocument" type="com.application.entity.UserDocument"/>
+        <typeAlias alias="UserFriends" type="com.application.entity.UserFriends"/>
     </typeAliases>
 </configuration>

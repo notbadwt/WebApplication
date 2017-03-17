@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.application.dao.UserDocumentDao">
+
+
+    <update id="updateUserDocument" parameterType="UserDocument" flushCache="true">
+
+        update user_document SET
+        name=#{name},
+        content=#{content},
+        status=#{status},
+        create_datetime=#{createDatetime},
+        user_id=#{userId}
+        WHERE id=#{id}
+
+    </update>
+
+
+    <delete id="deleteUserDocument" parameterType="String" flushCache="true">
+
+        DELETE FROM user_document WHERE id=#{id}
+
+    </delete>
+
+    <update id="removeUserDocument" parameterType="String" flushCache="true">
+        UPDATE user_document SET
+        status='0'
+        WHERE id=#{id}
+    </update>
+
+    <insert id="insertUserDocument" parameterType="UserDocument" flushCache="true">
+
+        INSERT INTO user_document (id,name,content,status,create_datetime,user_id) VALUES (#{id},#{name},#{content},#{status},#{createDatetime},#{userId})
+
+    </insert>
+
+    <select id="getUserDocumentById" parameterType="String" resultType="UserDocument">
+
+        SELECT  *  FROM user_document WHERE id=#{id}
+
+    </select>
+
+    <select id="listUserDocumentByUserId" parameterType="String" resultType="list" resultMap="userDocumentResultMap">
+
+        SELECT
+              ud.id,
+              ud.name,
+              ud.content,
+              ud.status,
+              ud.create_datetime,
+              ud.user_id,
+              u.id AS u_id,
+              u.username AS u_username,
+              u.password AS u_password,
+              u.status AS u_status,
+              u.type AS u_type,
+              u.name AS u_name,
+              u.unionid AS u_unionid,
+              u.create_datetime AS u_create_datetime,
+              u.last_login_datetime AS u_last_login_datetime
+
+        FROM user_document AS ud LEFT JOIN user AS u ON ud.user_id=u.id WHERE ud.user_id = #{id}
+
+    </select>
+
+    <resultMap id="userDocumentResultMap" type="UserDocument" autoMapping="true">
+
+        <association property="user" javaType="User">
+            <id property="id" column="u_id" javaType="String"/>
+            <result property="username" column="u_username" javaType="String"/>
+            <result property="password" column="u_password" javaType="String"/>
+            <result property="status" column="u_status" javaType="String"/>
+            <result property="type" column="u_type" javaType="String"/>
+            <result property="name" column="u_name" javaType="String"/>
+            <result property="unionId" column="u_unionid" javaType="String"/>
+            <result property="createDatetime" column="u_create_datetime" javaType="long"/>
+            <result property="lastLoginDatetime" column="u_last_login_datetime" javaType="long"/>
+        </association>
+    </resultMap>
+
+</mapper>

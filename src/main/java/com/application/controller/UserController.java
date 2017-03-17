@@ -1,9 +1,11 @@
 package com.application.controller;
 
+import com.application.dao.BaseDao;
 import com.application.dao.UserDao;
 import com.application.entity.User;
 import com.application.security.auth.AbstractSecurity;
 import com.application.security.exception.AuthenticationException;
+import com.fasterxml.jackson.databind.deser.Deserializers;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,8 @@ public class UserController {
 
     private UserDao userDao;
 
+    private BaseDao baseDao;
+
     @Autowired
     private AbstractSecurity abstractSecurity;
 
@@ -30,14 +34,15 @@ public class UserController {
     private PlatformTransactionManager transactionManager;
 
     @Autowired
-    public UserController(UserDao userDao) {
+    public UserController(BaseDao baseDao, UserDao userDao) {
         this.userDao = userDao;
+        this.baseDao = baseDao;
     }
 
     @RequestMapping({"selectUser"})
     @ResponseBody
     public User selectUser() {
-        return userDao.getUserById("1");
+        return userDao.getUserById("2");
     }
 
     @RequestMapping({"insertUser"})
@@ -51,7 +56,7 @@ public class UserController {
         user.setType("1");
         user.setCreateDatetime(new Date().getTime());
         user.setLastLoginDatetime(new Date().getTime());
-        userDao.insertUser(user);
+        baseDao.insertTest(user);
         return userDao.getUserById("2");
     }
 

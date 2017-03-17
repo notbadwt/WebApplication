@@ -6,11 +6,25 @@
 
 <mapper namespace="com.application.dao.UserDao">
 
-    <select id="getUserById" parameterType="string" resultType="User">
-        SELECT *
-        FROM user
-        WHERE ID = #{id}
+    <select id="getUserById" parameterType="string" resultType="User" resultMap="userResultMap">
+        SELECT u.* , ud.id AS ud_id, ud.name AS ud_name, ud.content AS ud_content, ud.status AS ud_status, ud.create_datetime AS ud_create_datetime,ud.user_id AS ud_user_id
+        FROM user AS u LEFT JOIN user_document AS ud ON u.id=ud.user_id
+        WHERE u.id = #{id}
     </select>
+
+    <resultMap id="userResultMap" type="User" autoMapping="true">
+        <collection property="userDocumentList" javaType="list" ofType="UserDocument">
+
+            <result property="id" column="ud_id" javaType="String"/>
+            <result property="name" column="ud_name" javaType="String"/>
+            <result property="content" column="ud_content" javaType="String"/>
+            <result property="status" column="ud_status" javaType="String"/>
+            <result property="createDatetime" column="ud_create_datetime" javaType="long"/>
+            <result property="userId" column="ud_user_id" javaType="String"/>
+            <association property="user" javaType="User"/>
+
+        </collection>
+    </resultMap>
 
     <select id="getUserByUsername" parameterType="string" resultType="User">
         SELECT *

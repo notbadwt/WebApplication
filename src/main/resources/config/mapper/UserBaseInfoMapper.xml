@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.application.dao.UserBaseInfoDao">
+    <insert id="insertUserBaseInfo" parameterType="UserBaseInfo" flushCache="true">
+
+        INSERT INTO user_base_info (id,birth,sex,phone,real_name,status,create_datetime,user_id) VALUES (#{id},#{birth},#{sex},#{phone},#{realName},#{status},#{createDatetime},#{userId})
+
+    </insert>
+
+    <select id="getUserBaseInfoByUserId" parameterType="String" resultMap="userBaseInfoResultMap">
+        SELECT
+               ubi.id,
+               ubi.birth,
+               ubi.sex, ubi.phone,
+               ubi.real_name,
+               ubi.status,
+               ubi.create_datetime,
+               ubi.user_id,
+               u.id AS u_id,
+               u.username AS u_username,
+               u.password AS u_password,
+               u.status AS u_status,
+               u.name AS  u_name,
+               u.type AS  u_type,
+               u.unionid AS u_unionid,
+               u.create_datetime AS u_create_datetime,
+               u.last_login_datetime AS u_last_login_datetime
+
+        FROM user_base_info AS ubi LEFT JOIN user AS u ON ubi.user_id = u.id WHERE ubi.user_id=#{id}
+    </select>
+
+    <update id="updateUserBaseInfo" parameterType="UserBaseInfo" flushCache="true">
+
+        UPDATE user_base_info
+        SET
+            birth     =#{birth},
+            sex       =#{sex},
+            phone     =#{phone},
+            real_name =#{realName},
+            status    =#{status},
+            user_id   =#{userId},
+            create_datetime = #{createDatetime}
+        WHERE id=#{id}
+
+    </update>
+
+
+    <delete id="deleteUserBaseInfo" parameterType="String" flushCache="true">
+
+        DELETE FROM user_base_info WHERE id=#{id}
+
+    </delete>
+
+    <update id="removeUserBaseInfo" parameterType="String" flushCache="true">
+
+        UPDATE user_base_info
+        SET
+            status='0'
+        WHERE id=#{id}
+
+    </update>
+
+    <resultMap id="userBaseInfoResultMap" type="UserBaseInfo">
+        <result column="id" property="id" javaType="String"/>
+        <result column="brith" property="birth" javaType="Date"/>
+        <result column="sex" property="sex" javaType="String"/>
+        <result column="phone" property="phone" javaType="String"/>
+        <result column="real_name" property="realName" javaType="String"/>
+        <result column="status" property="status" javaType="String"/>
+        <result column="user_id" property="userId" javaType="String"/>
+        <result column="create_datetime" property="createDatetime" javaType="long"/>
+        <association property="user" javaType="User">
+            <id property="id" column="u_id" javaType="String"/>
+            <result property="username" column="u_username" javaType="String"/>
+            <result property="password" column="u_password" javaType="String"/>
+            <result property="status" column="u_status" javaType="String"/>
+            <result property="type" column="u_type" javaType="String"/>
+            <result property="name" column="u_name" javaType="String"/>
+            <result property="unionId" column="u_unionid" javaType="String"/>
+            <result property="createDatetime" column="u_create_datetime" javaType="long"/>
+            <result property="lastLoginDatetime" column="u_last_login_datetime" javaType="long"/>
+        </association>
+    </resultMap>
+
+</mapper>
