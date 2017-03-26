@@ -3,11 +3,13 @@ package com.application.controller;
 import com.application.dao.BaseDao;
 import com.application.dao.UserDao;
 import com.application.entity.User;
-import com.application.security.auth.AbstractSecurity;
-import com.application.security.exception.AuthenticationException;
-import com.fasterxml.jackson.databind.deser.Deserializers;
+import com.application.service.UserService;
+import com.logger.ServiceLoggerAspect;
+import com.security.auth.AbstractSecurity;
+import com.security.exception.AuthenticationException;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.security.model.UserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -34,6 +36,12 @@ public class UserController {
     private PlatformTransactionManager transactionManager;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
+    private ServiceLoggerAspect serviceLoggerAspect;
+
+    @Autowired
     public UserController(BaseDao baseDao, UserDao userDao) {
         this.userDao = userDao;
         this.baseDao = baseDao;
@@ -44,6 +52,16 @@ public class UserController {
     public User selectUser() {
         return userDao.getUserById("2");
     }
+
+
+    @RequestMapping({"getUserByUsername"})
+    @ResponseBody
+    public UserDetails getUserByUsername(HttpServletRequest request) throws Exception {
+        String userName = request.getParameter("username");
+        return userService.getUserByUsername(userName);
+
+    }
+
 
     @RequestMapping({"insertUser"})
     @ResponseBody

@@ -4,7 +4,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 
-    <bean id="securityStrategy" class="com.application.security.auth.IsAuthenticatedSecurityStrategy">
+    <bean id="securityStrategy" class="com.security.auth.IsAuthenticatedSecurityStrategy">
         <constructor-arg name="userDetailsService" ref="userServiceImpl"/>
         <constructor-arg name="loginUrl" value="/login"/>
         <constructor-arg name="urlList">

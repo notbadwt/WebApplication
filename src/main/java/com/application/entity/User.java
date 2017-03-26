@@ -1,6 +1,6 @@
 package com.application.entity;
 
-import com.application.security.model.UserDetails;
+import com.security.model.UserDetails;
 
 import java.util.List;
 

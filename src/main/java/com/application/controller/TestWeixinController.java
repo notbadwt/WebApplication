@@ -1,19 +1,14 @@
 package com.application.controller;
 
 
-import com.application.entity.User;
-import com.application.security.auth.AbstractSecurity;
-import com.application.util.CommonUtil;
-import com.application.weixin.AccessTokenHolder;
-import com.application.weixin.Weixin;
-import com.application.weixin.model.AccessToken;
-import com.application.weixin.model.Result;
-import com.application.weixin.model.Token;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.security.auth.AbstractSecurity;
+import com.util.CommonUtil;
+import com.weixin.Weixin;
+import com.weixin.model.AccessToken;
+import com.weixin.model.Result;
+import com.weixin.model.Token;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
