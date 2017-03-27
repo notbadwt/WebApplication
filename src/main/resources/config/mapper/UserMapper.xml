@@ -6,7 +6,7 @@
 
 <mapper namespace="com.application.dao.UserDao">
 
-    <select id="getUserById" parameterType="string" resultType="User" resultMap="userResultMap">
+    <select id="getUserById" parameterType="int" resultType="User" resultMap="userResultMap">
         SELECT u.* , ud.id AS ud_id, ud.name AS ud_name, ud.content AS ud_content, ud.status AS ud_status, ud.create_datetime AS ud_create_datetime,ud.user_id AS ud_user_id
         FROM user AS u LEFT JOIN user_document AS ud ON u.id=ud.user_id
         WHERE u.id = #{id}
@@ -56,12 +56,12 @@
         WHERE id = #{id}
     </update>
 
-    <delete id="deleteUser" parameterType="string" flushCache="true">
+    <delete id="deleteUser" parameterType="int" flushCache="true">
         DELETE FROM user
         WHERE id = #{id}
     </delete>
 
-    <update id="removeUser" parameterType="string" flushCache="true">
+    <update id="removeUser" parameterType="int" flushCache="true">
         UPDATE user
         SET
             status = '0'

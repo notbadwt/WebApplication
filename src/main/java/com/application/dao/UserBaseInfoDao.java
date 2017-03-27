@@ -7,15 +7,15 @@ import com.application.entity.UserBaseInfo;
  */
 public interface UserBaseInfoDao {
 
-    UserBaseInfo getUserBaseInfoByUserId(String id);
+    UserBaseInfo getUserBaseInfoByUserId(Integer id);
 
     void insertUserBaseInfo(UserBaseInfo userBaseInfo);
 
     void updateUserBaseInfo(UserBaseInfo userBaseInfo);
 
-    void deleteUserBaseInfo(String id);
+    void deleteUserBaseInfo(Integer id);
 
-    void removeUserBaseInfo(String id);
+    void removeUserBaseInfo(Integer id);
 
 
 }

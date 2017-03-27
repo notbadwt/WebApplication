@@ -10,16 +10,18 @@ import java.util.List;
  */
 public interface UserDocumentDao {
 
-    List<UserDocument> listUserDocumentByUserId(String id);
+    List<UserDocument> listUserDocumentByUserId(Integer id);
 
-    UserDocument getUserDocumentById(String id);
+    List<UserDocument> listUserDocumentByUserFriends(Integer id);
+
+    UserDocument getUserDocumentById(Integer id);
 
     void insertUserDocument(UserDocument userDocument);
 
     void updateUserDocument(UserDocument userDocument);
 
-    void deleteUserDocument(String id);
+    void deleteUserDocument(Integer id);
 
-    void removeUserDocument(String id);
+    void removeUserDocument(Integer id);
 
 }

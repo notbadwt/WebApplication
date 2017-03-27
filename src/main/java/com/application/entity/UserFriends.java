@@ -1,24 +1,23 @@
 package com.application.entity;
 
 
-
 public class UserFriends {
 
-    private String id;
+    private Integer id;
     private User follower;
     private User user;
     private String status;
     private String createDatetime;
 
-    private String userId;
-    private String followerId;
+    private Integer userId;
+    private Integer followerId;
 
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -55,20 +54,19 @@ public class UserFriends {
 
     }
 
-
-    public String getUserId() {
+    public Integer getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(Integer userId) {
         this.userId = userId;
     }
 
-    public String getFollowerId() {
+    public Integer getFollowerId() {
         return followerId;
     }
 
-    public void setFollowerId(String followerId) {
+    public void setFollowerId(Integer followerId) {
         this.followerId = followerId;
     }
 }

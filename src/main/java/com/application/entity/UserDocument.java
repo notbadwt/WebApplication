@@ -5,21 +5,20 @@ package com.application.entity;
  */
 public class UserDocument {
 
-    private String id;
+    private Integer id;
     private String name;
     private String content;
     private String status;
     private Long createDatetime;
 
-    private String userId;
+    private Integer userId;
     private User user;
 
-
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -63,11 +62,11 @@ public class UserDocument {
         this.user = user;
     }
 
-    public String getUserId() {
+    public Integer getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(Integer userId) {
         this.userId = userId;
     }
 }

@@ -32,8 +32,8 @@ public class UserBaseInfoController {
         UserBaseInfo userBaseInfo = new UserBaseInfo();
         userBaseInfo.setBirth(new Date());
         userBaseInfo.setCreateDatetime(System.currentTimeMillis());
-        userBaseInfo.setId("1");
-        userBaseInfo.setUserId("2");
+        userBaseInfo.setId(1);
+        userBaseInfo.setUserId(2);
         userBaseInfo.setPhone("13693097151");
         userBaseInfo.setRealName("wangtao");
         userBaseInfo.setSex("1");
@@ -44,7 +44,7 @@ public class UserBaseInfoController {
 
     @RequestMapping({"/getById"})
     public String getUserBaseInfoByUserId() {
-        String id = "2";
+        Integer id = 2;
         UserBaseInfo userBaseInfo = userBaseInfoDao.getUserBaseInfoByUserId(id);
         Gson gson = new GsonBuilder().create();
         return gson.toJson(userBaseInfo);
@@ -53,7 +53,7 @@ public class UserBaseInfoController {
 
     @RequestMapping({"/delete"})
     public String deleteUserBaseInfoById() {
-        String id = "1";
+        Integer id = 1;
         try {
 
             userBaseInfoDao.deleteUserBaseInfo(id);
@@ -65,7 +65,7 @@ public class UserBaseInfoController {
 
     @RequestMapping({"/update"})
     public String updateUserBaseInfo() {
-        UserBaseInfo userBaseInfo = userBaseInfoDao.getUserBaseInfoByUserId("2");
+        UserBaseInfo userBaseInfo = userBaseInfoDao.getUserBaseInfoByUserId(2);
         userBaseInfo.setRealName("WangTao");
         userBaseInfoDao.updateUserBaseInfo(userBaseInfo);
         Gson gson = new GsonBuilder().create();
@@ -75,9 +75,9 @@ public class UserBaseInfoController {
 
     @RequestMapping({"/remove"})
     public String removeUserBaseInfo() {
-        userBaseInfoDao.removeUserBaseInfo("1");
+        userBaseInfoDao.removeUserBaseInfo(1);
         Gson gson = new GsonBuilder().create();
-        return gson.toJson(userBaseInfoDao.getUserBaseInfoByUserId("2"));
+        return gson.toJson(userBaseInfoDao.getUserBaseInfoByUserId(2));
     }
 
 

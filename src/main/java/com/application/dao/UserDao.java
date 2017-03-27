@@ -7,7 +7,7 @@ import com.application.entity.User;
  */
 public interface UserDao {
 
-    User getUserById(String id);
+    User getUserById(Integer id);
 
     User getUserByUsername(String username);
 
@@ -17,8 +17,8 @@ public interface UserDao {
 
     void updateUser(User user);
 
-    void deleteUser(String id);
+    void deleteUser(Integer id);
 
-    void removeUser(String id);
+    void removeUser(Integer id);
 
 }

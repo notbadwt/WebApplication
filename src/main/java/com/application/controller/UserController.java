@@ -50,7 +50,7 @@ public class UserController {
     @RequestMapping({"selectUser"})
     @ResponseBody
     public User selectUser() {
-        return userDao.getUserById("2");
+        return userDao.getUserById(2);
     }
 
 
@@ -67,7 +67,7 @@ public class UserController {
     @ResponseBody
     public User insertUser() {
         User user = new User();
-        user.setId("2");
+        user.setId(2);
         user.setUsername("13693097151");
         user.setPassword("123123");
         user.setStatus("1");
@@ -75,7 +75,7 @@ public class UserController {
         user.setCreateDatetime(new Date().getTime());
         user.setLastLoginDatetime(new Date().getTime());
         baseDao.insertTest(user);
-        return userDao.getUserById("2");
+        return userDao.getUserById(2);
     }
 
 
@@ -109,25 +109,25 @@ public class UserController {
     @RequestMapping({"updateUser"})
     @ResponseBody
     public User updateUser() {
-        User user = userDao.getUserById("2");
+        User user = userDao.getUserById(2);
         user.setUsername("wangtao");
         userDao.updateUser(user);
-        return userDao.getUserById("2");
+        return userDao.getUserById(2);
     }
 
 
     @RequestMapping({"removeUser"})
     @ResponseBody
     public User removeUser() {
-        userDao.removeUser("2");
-        return userDao.getUserById("2");
+        userDao.removeUser(2);
+        return userDao.getUserById(2);
     }
 
     @RequestMapping({"deleteUser"})
     @ResponseBody
     public User deleteUser() {
-        User user = userDao.getUserById("1");
-        userDao.deleteUser("1");
+        User user = userDao.getUserById(2);
+        userDao.deleteUser(2);
         return user;
     }
 
@@ -141,7 +141,7 @@ public class UserController {
         TransactionStatus status = transactionManager.getTransaction(def);
         try {
             User user = new User();
-            user.setId("3");
+            user.setId(2);
             user.setUsername("13693097151");
             user.setPassword("123123");
             user.setStatus("1");
@@ -155,7 +155,7 @@ public class UserController {
             throw ex;
         }
         transactionManager.commit(status);
-        return userDao.getUserById("3");
+        return userDao.getUserById(2);
     }
 
 

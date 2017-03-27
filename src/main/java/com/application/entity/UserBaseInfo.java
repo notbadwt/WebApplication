@@ -7,22 +7,22 @@ import java.util.Date;
  */
 public class UserBaseInfo {
 
-    private String id;
+    private Integer id;
     private Date birth;
     private String sex;
     private String phone;
     private String realName;
     private String status;
-    private String userId;
+    private Integer userId;
     private Long createDatetime;
 
     private User user;
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -82,11 +82,11 @@ public class UserBaseInfo {
         this.user = user;
     }
 
-    public String getUserId() {
+    public Integer getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(Integer userId) {
         this.userId = userId;
     }
 }

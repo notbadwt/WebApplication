@@ -10,7 +10,7 @@
 
     </insert>
 
-    <select id="getUserBaseInfoByUserId" parameterType="String" resultMap="userBaseInfoResultMap">
+    <select id="getUserBaseInfoByUserId" parameterType="int" resultMap="userBaseInfoResultMap">
         SELECT
                ubi.id,
                ubi.birth,
@@ -48,13 +48,13 @@
     </update>
 
 
-    <delete id="deleteUserBaseInfo" parameterType="String" flushCache="true">
+    <delete id="deleteUserBaseInfo" parameterType="int" flushCache="true">
 
         DELETE FROM user_base_info WHERE id=#{id}
 
     </delete>
 
-    <update id="removeUserBaseInfo" parameterType="String" flushCache="true">
+    <update id="removeUserBaseInfo" parameterType="int" flushCache="true">
 
         UPDATE user_base_info
         SET

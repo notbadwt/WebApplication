@@ -19,31 +19,31 @@
     </update>
 
 
-    <delete id="deleteUserDocument" parameterType="String" flushCache="true">
+    <delete id="deleteUserDocument" parameterType="int" flushCache="true">
 
         DELETE FROM user_document WHERE id=#{id}
 
     </delete>
 
-    <update id="removeUserDocument" parameterType="String" flushCache="true">
+    <update id="removeUserDocument" parameterType="int" flushCache="true">
         UPDATE user_document SET
         status='0'
         WHERE id=#{id}
     </update>
 
-    <insert id="insertUserDocument" parameterType="UserDocument" flushCache="true">
+    <insert id="insertUserDocument" parameterType="UserDocument" flushCache="true" useGeneratedKeys="true" keyProperty="id">
 
-        INSERT INTO user_document (id,name,content,status,create_datetime,user_id) VALUES (#{id},#{name},#{content},#{status},#{createDatetime},#{userId})
+        INSERT INTO user_document (name,content,status,create_datetime,user_id) VALUES (#{name},#{content},#{status},#{createDatetime},#{userId})
 
     </insert>
 
-    <select id="getUserDocumentById" parameterType="String" resultType="UserDocument">
+    <select id="getUserDocumentById" parameterType="int" resultType="UserDocument">
 
         SELECT  *  FROM user_document WHERE id=#{id}
 
     </select>
 
-    <select id="listUserDocumentByUserId" parameterType="String" resultType="list" resultMap="userDocumentResultMap">
+    <select id="listUserDocumentByUserId" parameterType="int" resultType="list" resultMap="userDocumentResultMap">
 
         SELECT
               ud.id,
@@ -66,10 +66,36 @@
 
     </select>
 
+    <select id="listUserDocumentByUserFriends" parameterType="int" resultType="list"
+            resultMap="userDocumentResultMap">
+
+        SELECT
+              ud.name,
+              ud.id,
+              ud.user_id,
+              ud.status,
+              u.id AS u_id,
+              u.username AS u_username,
+              u.password AS u_password,
+              u.status AS u_status,
+              u.type AS u_type,
+              u.name AS u_name,
+              u.unionid AS u_unionid,
+              u.create_datetime AS u_create_datetime,
+              u.last_login_datetime AS u_last_login_datetime
+
+        FROM user_document AS ud
+        LEFT JOIN user AS u ON u.id=ud.user_id,
+        user_friends AS uf
+        WHERE uf.user_id=#{id} AND ud.user_id=uf.follower_id
+        ORDER BY ud.create_datetime DESC
+
+    </select>
+
     <resultMap id="userDocumentResultMap" type="UserDocument" autoMapping="true">
 
         <association property="user" javaType="User">
-            <id property="id" column="u_id" javaType="String"/>
+            <id property="id" column="u_id" javaType="int"/>
             <result property="username" column="u_username" javaType="String"/>
             <result property="password" column="u_password" javaType="String"/>
             <result property="status" column="u_status" javaType="String"/>

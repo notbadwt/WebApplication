@@ -1,30 +1,30 @@
 package com.config;
 
-
-import com.weixin.Weixin;
-import com.weixin.service.TokenService;
-import com.weixin.service.impl.TokenServiceImpl;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.*;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
+import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
-import javax.ejb.Schedule;
 import java.util.ArrayList;
 import java.util.List;
 
-
 @Configuration
-@ComponentScan(basePackages = {"com.**.**.controller", "com.**.**.dao", "com.**.**.service.impl"})
-public class SpringMVCConfig {
+@EnableWebMvc
+@ComponentScan(basePackages = {"com.application.controller"})
+public class WebConfig extends WebMvcConfigurerAdapter {
+
+    @Override
+    public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
+        configurer.enable();
+    }
 
     @Bean(name = "multipartResolver")
     @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
@@ -70,19 +70,5 @@ public class SpringMVCConfig {
         return viewResolver;
     }
 
-
-    @Bean(name = "tokenService")
-    @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
-    public TokenService tokenService() {
-        return new TokenServiceImpl();
-    }
-
-    @Bean(name = "weixin")
-    @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
-    public Weixin weixin() throws Exception {
-        Weixin weixin = new Weixin("wx7f6aa253b75466dd", "04928de13ab23dca159d235ba6dc19ea", Weixin.TYPE_FUWUHAO);
-        weixin.setTokenService(tokenService());
-        return weixin;
-    }
 
 }
