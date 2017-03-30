@@ -7,8 +7,15 @@
     <groupId>WebApplication</groupId>
     <artifactId>Application-SpringMVC-MyBatis</artifactId>
     <version>1.0</version>
-    <packaging>war</packaging>
+    <packaging>pom</packaging>
 
+
+    <modules>
+        <module>entity</module>
+        <module>security</module>
+        <module>services</module>
+        <module>server</module>
+    </modules>
 
     <repositories>
         <repository>
@@ -31,7 +38,11 @@
         </repository>
     </repositories>
 
+
     <dependencies>
+
+
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -222,10 +233,16 @@
             <artifactId>slf4j-api</artifactId>
             <version>${slf4j.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>dubbo</artifactId>
+            <version>${dubbo.version}</version>
+        </dependency>
     </dependencies>
 
-
     <properties>
+        <dubbo.version>2.5.3</dubbo.version>
         <slf4j.version>1.7.25</slf4j.version>
         <log4j.version>2.8.1</log4j.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -239,7 +256,6 @@
         <commons-io.version>1.3.2</commons-io.version>
         <commons-pool.version>1.6</commons-pool.version>
         <servlet.version>3.1.0</servlet.version>
-        <!--<log4j.version>1.2.17</log4j.version>-->
         <httpasyncclient.version>4.1.1</httpasyncclient.version>
         <javaee-api.version>7.0</javaee-api.version>
         <tomcat-jdbc.version>8.0.23</tomcat-jdbc.version>
@@ -247,14 +263,7 @@
         <jedis.version>2.8.1</jedis.version>
     </properties>
 
-
     <build>
-        <resources>
-            <resource>
-                <directory>src/main/resources/</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -280,16 +289,18 @@
                     <packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes>
                 </configuration>
             </plugin>
-            <!--<plugin>-->
-            <!--<groupId>org.apache.maven.plugins</groupId>-->
-            <!--<artifactId>maven-surefire-plugin</artifactId>-->
-            <!--<configuration>-->
-            <!--<excludes>-->
-            <!--<exclude>**/*Test.java</exclude>-->
-            <!--</excludes>-->
-            <!--</configuration>-->
-            <!--</plugin>-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>**/*Test.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
+
 
 </project>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.application.web.dao.UserDao">
+
+    <select id="getUserById" parameterType="int" resultType="User" resultMap="userResultMap">
+        SELECT u.* , ud.id AS ud_id, ud.name AS ud_name, ud.content AS ud_content, ud.status AS ud_status, ud.create_datetime AS ud_create_datetime,ud.user_id AS ud_user_id
+        FROM user AS u LEFT JOIN user_document AS ud ON u.id=ud.user_id
+        WHERE u.id = #{id}
+    </select>
+
+    <resultMap id="userResultMap" type="User" autoMapping="true">
+        <collection property="userDocumentList" javaType="list" ofType="UserDocument">
+
+            <result property="id" column="ud_id" javaType="String"/>
+            <result property="name" column="ud_name" javaType="String"/>
+            <result property="content" column="ud_content" javaType="String"/>
+            <result property="status" column="ud_status" javaType="String"/>
+            <result property="createDatetime" column="ud_create_datetime" javaType="long"/>
+            <result property="userId" column="ud_user_id" javaType="String"/>
+            <association property="user" javaType="User"/>
+
+        </collection>
+    </resultMap>
+
+    <select id="getUserByUsername" parameterType="string" resultType="User">
+        SELECT *
+        FROM user
+        WHERE username = #{username}
+    </select>
+
+    <select id="getUserByUnionId" parameterType="string" resultType="User">
+        SELECT *
+        FROM user
+        WHERE union_id = #{unionId}
+    </select>
+
+    <insert id="insertUser" parameterType="User" flushCache="true">
+        INSERT INTO user (id, username, password, status, type, name, create_datetime, last_login_datetime) VALUES
+            (#{id}, #{username}, #{password}, #{status}, #{type}, #{name}, #{createDatetime}, #{lastLoginDatetime})
+    </insert>
+
+    <update id="updateUser" parameterType="User" flushCache="true">
+        UPDATE user
+        SET
+            username            = #{username},
+            password            = #{password},
+            status              = #{status},
+            type                = #{type},
+            name                = #{name},
+            create_datetime     = #{createDatetime},
+            last_login_datetime = #{lastLoginDatetime}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteUser" parameterType="int" flushCache="true">
+        DELETE FROM user
+        WHERE id = #{id}
+    </delete>
+
+    <update id="removeUser" parameterType="int" flushCache="true">
+        UPDATE user
+        SET
+            status = '0'
+        WHERE id = #{id}
+    </update>
+
+</mapper>
